@@ -55,4 +55,12 @@ class CategoryCrud extends Component
     {
         Category::destroy($id);
     }
+
+    public function mount()
+    {
+        if (!auth()->user()->can('manage categories')) {
+            abort(403);
+        }
+    }
+
 }

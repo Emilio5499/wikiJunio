@@ -29,4 +29,12 @@ class ArticleCrud extends Component
 
         $this->reset(['title', 'content']);
     }
+
+    public function mount()
+    {
+        if (!auth()->user()->can('manage articles')) {
+            abort(403);
+        }
+    }
+
 }

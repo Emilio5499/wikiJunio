@@ -31,4 +31,21 @@ Route::get('/admin/categories', function () {
     return view('admin.categories');
 })->middleware('auth');
 
+Route::get('/', function () {
+    $articles = App\Models\Article::latest()->with('user')->get();
+    return view('public', compact('articles'));
+});
+
+Route::middleware(['auth', 'permission:manage articles'])->group(function () {
+    Route::get('/wiki', function () {
+        return view('wiki');
+    });
+});
+
+Route::middleware(['auth', 'permission:manage categories'])->group(function () {
+    Route::get('/admin/categories', function () {
+        return view('admin.categories');
+    });
+});
+
 require __DIR__.'/auth.php';

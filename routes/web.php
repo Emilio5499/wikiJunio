@@ -27,4 +27,8 @@ Route::get('/', function () {
     return view('public', compact('articles'));
 });
 
+Route::get('/admin/categories', function () {
+    return view('admin.categories');
+})->middleware('auth');
+
 require __DIR__.'/auth.php';

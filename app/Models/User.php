@@ -52,4 +52,11 @@ class User extends Authenticatable
         return $this->hasMany(\App\Models\Article::class);
     }
 
+    public function collaboratedArticles()
+    {
+        return $this->belongsToMany(Article::class)
+            ->withPivot('role_in_article', 'joined_at')
+            ->withTimestamps();
+    }
+
 }

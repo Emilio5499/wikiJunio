@@ -16,4 +16,11 @@ class Article extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function collaborators()
+    {
+        return $this->belongsToMany(User::class)
+            ->withPivot('role_in_article', 'joined_at')
+            ->withTimestamps();
+    }
+
 }

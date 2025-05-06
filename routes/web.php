@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PublicArticleController;
 use App\Models\Article;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +31,9 @@ Route::get('/', function () {
 Route::get('/admin/categories', function () {
     return view('admin.categories');
 })->middleware('auth');
+
+Route::get('/', [PublicArticleController::class, 'index'])->name('public.articles.index');
+Route::get('/articles/{article}', [PublicArticleController::class, 'show'])->name('public.articles.show');
 
 Route::get('/', function () {
     $articles = App\Models\Article::latest()->with('user')->get();

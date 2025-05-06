@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="max-w-4xl mx-auto py-10">
-        <h1 class="text-3xl font-bold mb-6">Públicos</h1>
+        <h1 class="text-3xl font-bold mb-6">Publico</h1>
 
         @foreach ($articles as $article)
             <div class="mb-6 border-b pb-4">

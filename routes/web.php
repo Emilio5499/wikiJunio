@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ArticlePdfController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicArticleController;
 use App\Models\Article;
@@ -27,6 +28,9 @@ Route::get('/', function () {
     $articles = Article::latest()->with('user')->get();
     return view('public', compact('articles'));
 });
+
+Route::get('/articles/{article}/download-pdf', [ArticlePdfController::class, 'download'])
+    ->name('articles.downloadPdf');
 
 Route::get('/admin/categories', function () {
     return view('admin.categories');

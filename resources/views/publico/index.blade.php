@@ -3,10 +3,10 @@
 
 @section('content')
     <div class="container">
-        <h1>Artículos públicos</h1>
+        <h1>Post publicos</h1>
 
         <form method="GET">
-            <input type="text" name="search" value="{{ $search }}" placeholder="Buscar artículos..." class="form-control mb-3">
+            <input type="text" name="search" value="{{ $search }}" class="form-control mb-3">
         </form>
 
         @foreach ($articles as $article)
@@ -20,4 +20,30 @@
 
         {{ $articles->withQueryString()->links() }}
     </div>
+
+    @foreach ($articles as $article)
+        <div class="card mb-3">
+            <div class="card-body">
+                <h4>
+                    <a href="{{ route('public.articles.show', $article) }}">
+                        {{ $article->title }}
+                    </a>
+                </h4>
+                <p class="text-muted">
+                    Por {{ $article->user->name ?? 'Anónimo' }} — {{ $article->created_at->format('d/m/Y') }}
+                </p>
+                <p>{{ Str::limit(strip_tags($article->content), 120) }}</p>
+
+                @if ($article->tags->count())
+                    <div>
+                        @foreach ($article->tags as $tag)
+                            <span class="badge bg-primary">{{ $tag->name }}</span>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </div>
+    @endforeach
+
+
 @endsection

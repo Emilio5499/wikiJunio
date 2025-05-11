@@ -29,10 +29,6 @@ Route::get('/', function () {
     return view('public', compact('articles'));
 });
 
-if (app()->environment('local')) {
-    require __DIR__.'/docs.php';
-}
-
 Route::get('/articles/{article}/download-pdf', [ArticlePdfController::class, 'download'])
     ->name('articles.downloadPdf');
 

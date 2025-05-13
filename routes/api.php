@@ -8,3 +8,11 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::get('/articles/{id}/pdf', [ArticleApiController::class, 'downloadPdf']);
+
+Route::middleware('auth:sanctum')->prefix('articles')->group(function () {
+    Route::get('/', [ArticleApiController::class, 'index']);
+    Route::post('/', [ArticleApiController::class, 'store']);
+    Route::get('{id}', [ArticleApiController::class, 'show']);
+    Route::put('{id}', [ArticleApiController::class, 'update']);
+    Route::delete('{id}', [ArticleApiController::class, 'destroy']);
+});

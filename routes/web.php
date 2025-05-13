@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ArticleApiController;
 use App\Http\Controllers\ArticlePdfController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicArticleController;
@@ -27,6 +28,10 @@ Route::get('/wiki', function () {
 Route::get('/', function () {
     $articles = Article::latest()->with('user')->get();
     return view('public', compact('articles'));
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/articles', [ArticleApiController::class, 'store']);
 });
 
 Route::get('/articles/{article}/download-pdf', [ArticlePdfController::class, 'download'])

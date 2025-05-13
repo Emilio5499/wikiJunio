@@ -3,20 +3,27 @@
 use App\Models\User;
 use App\Models\Article;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Permission;
 
 uses(RefreshDatabase::class);
 
-it('permite a un usuario autenticado crear un post', function () {
+it('permite a un usuario autenticado crear un artículo', function () {
+    Permission::create(['name' => 'manage posts']);
+
     $user = User::factory()->create();
+    $user->givePermissionTo('manage posts');
 
-    $this->actingAs($user)
-        ->post('/api/articles', [
-            'title' => 'Título',
-            'content' => 'Contenido',
+    $this->actingAs($user, 'sanctum')
+        ->postJson('/api/articles', [
+            'title' => 'Título de prueba',
+            'content' => 'Contenido de prueba',
         ])
-        ->assertStatus(201);
+        ->assertStatus(201)
+        ->assertJsonFragment([
+            'title' => 'Título de prueba',
+        ]);
 
-    expect(Article::where('title', 'Título')->exists())->toBeTrue();
+    expect(Article::where('title', 'Título de prueba')->exists())->toBeTrue();
 });
 
 it('no permite crear un post sin estar autenticado', function () {

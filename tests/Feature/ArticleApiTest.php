@@ -60,7 +60,33 @@ it('logged user can delete own posts', function () {
     $response = deleteJson("/api/articles/{$article->id}");
 
     $response->assertStatus(200);
-    $response->assertJsonFragment(['message' => 'Artículo eliminado']);
+    $response->assertJsonFragment(['message' => 'post borrado']);
 
     expect(Article::find($article->id))->toBeNull();
+});
+
+it('user cannot edit other user post', function () {
+    $user = User::factory()->create();
+    $otro = User::factory()->create();
+
+    $article = Article::factory()->for($otro)->create();
+
+    actingAs($user);
+
+    putJson("/api/articles/{$article->id}", [
+        'title' => 'Editar',
+        'content' => 'contenido',
+    ])->assertStatus(404);
+});
+
+it('user cannot delete other user post', function () {
+    $user = User::factory()->create();
+    $otro = User::factory()->create();
+
+    $article = Article::factory()->for($otro)->create();
+
+    actingAs($user);
+
+    deleteJson("/api/articles/{$article->id}")
+        ->assertStatus(404);
 });

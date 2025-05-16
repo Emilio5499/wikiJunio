@@ -11,6 +11,14 @@
                 <small class="text-gray-500">Por: {{ $article->user->name }}</small>
             </div>
         @endforeach
+        <h1>{{ __('messages.articles') }}</h1>
+
+        <input type="text" placeholder="{{ __('messages.search') }}">
+        <label>{{ __('messages.title') }}</label>
+
+        <button>{{ __('messages.save') }}</button>
+        <a href="#">{{ __('messages.cancel') }}</a>
+
     </div>
 @endsection
 <?php

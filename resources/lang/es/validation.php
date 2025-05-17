@@ -270,7 +270,7 @@ return [
         'test_name'                => 'nombre de prueba',
         'text'                     => 'texto',
         'time'                     => 'hora',
-        'title'                    => 'título',
+        'title'                    => 'titulo',
         'type'                     => 'tipo',
         'updated_at'               => 'actualizado el',
         'user'                     => 'usuario',

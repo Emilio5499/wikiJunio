@@ -27,6 +27,10 @@ class CommentCrud extends Component
 
     public function addComment()
     {
+        if (!auth()->check()) {
+            abort(403);
+        }
+
         $this->validate([
             'content' => 'required|string|min:2',
         ]);

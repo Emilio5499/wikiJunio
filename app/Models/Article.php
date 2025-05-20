@@ -33,6 +33,11 @@ class Article extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function comments()
+    {
+        return $this->hasMany(Comentario::class);
+    }
+
     public function collaborators()
     {
         return $this->belongsToMany(User::class, 'article_user')

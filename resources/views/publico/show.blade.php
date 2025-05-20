@@ -26,6 +26,8 @@
         </ul>
     @endif
 
+    <livewire:comment-crud :articleId="$article->id" />
+
     <a href="{{ route('articles.downloadPdf', $article) }}" class="btn btn-primary mt-3">
         Descargar
     </a>

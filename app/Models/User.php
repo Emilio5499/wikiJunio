@@ -52,6 +52,11 @@ class User extends Authenticatable
         return $this->hasMany(\App\Models\Article::class);
     }
 
+    public function comments()
+    {
+        return $this->hasMany(Comentario::class);
+    }
+
     public function collaboratedArticles()
     {
         return $this->belongsToMany(Article::class)

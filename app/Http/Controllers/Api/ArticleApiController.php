@@ -55,13 +55,17 @@ class ArticleApiController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
+            'category_id' => 'nullable|exists:categories,id',
         ]);
 
         $validated['user_id'] = $request->user()->id;
 
         $article = Article::create($validated);
 
-        return response()->json($article, 201);
+        return response()->json(
+            $article->fresh(['category', 'user']),
+            201
+        );
     }
 
     public function downloadPdf($id)

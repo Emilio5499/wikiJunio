@@ -58,6 +58,22 @@ class CommentCrud extends Component
         $this->cargaComentario();
     }
 
+    public function editaComentario($id, $newContent)
+    {
+        $comentario = \App\Models\Comentario::findOrFail($id);
+        $user = auth()->user();
+
+        if ($comentario->user_id !== $user->id) {
+            abort(403);
+        }
+
+        $comentario->update([
+            'content' => $newContent,
+        ]);
+
+        $this->cargaComentario();
+    }
+
     public function render()
     {
         return view('livewire.comment-crud');

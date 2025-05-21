@@ -107,3 +107,70 @@ it('logged user cannot delete other user comment', function () {
         'content' => 'Comentario usuario 1',
     ]);
 });
+
+it('logged user can edit own comment', function () {
+    $user = User::factory()->create();
+    $article = Article::factory()->create();
+
+    $comentario = Comentario::create([
+        'user_id' => $user->id,
+        'article_id' => $article->id,
+        'content' => 'Original',
+    ]);
+
+    Livewire::actingAs($user)
+        ->test('comment-crud', ['articleId' => $article->id])
+        ->call('editaComentario', $comentario->id, 'Editado');
+
+    $this->assertDatabaseHas('comentarios', [
+        'id' => $comentario->id,
+        'content' => 'Editado',
+    ]);
+});
+
+it('logged user cannot edit other user comment', function () {
+    $usuario = User::factory()->create();
+    $otroUsuario = User::factory()->create();
+    $article = Article::factory()->create();
+
+    $comentario = Comentario::create([
+        'user_id' => $otroUsuario->id,
+        'article_id' => $article->id,
+        'content' => 'Original',
+    ]);
+
+    Livewire::actingAs($usuario)
+        ->test('comment-crud', ['articleId' => $article->id])
+        ->call('editaComentario', $comentario->id, 'Editado fallo')
+        ->assertForbidden();
+
+    $this->assertDatabaseHas('comentarios', [
+        'id' => $comentario->id,
+        'content' => 'Original',
+    ]);
+});
+
+it('admin cannot edit other user comment', function () {
+    Role::findOrCreate('admin');
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+
+    $autor = User::factory()->create();
+    $article = Article::factory()->create();
+
+    $comentario = Comentario::create([
+        'user_id' => $autor->id,
+        'article_id' => $article->id,
+        'content' => 'Original',
+    ]);
+
+    Livewire::actingAs($admin)
+        ->test('comment-crud', ['articleId' => $article->id])
+        ->call('editaComentario', $comentario->id, 'Editado admin falla')
+        ->assertForbidden();
+
+    $this->assertDatabaseHas('comentarios', [
+        'id' => $comentario->id,
+        'content' => 'Original',
+    ]);
+});

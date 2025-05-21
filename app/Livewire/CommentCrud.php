@@ -14,10 +14,10 @@ class CommentCrud extends Component
     public function mount($articleId)
     {
         $this->articleId = $articleId;
-        $this->loadComments();
+        $this->cargaComentario();
     }
 
-    public function loadComments()
+    public function cargaComentario()
     {
         $this->comments = Comentario::with('user')
             ->where('article_id', $this->articleId)
@@ -25,7 +25,7 @@ class CommentCrud extends Component
             ->get();
     }
 
-    public function addComment()
+    public function creaComentario()
     {
         if (!auth()->check()) {
             abort(403);
@@ -42,7 +42,20 @@ class CommentCrud extends Component
         ]);
 
         $this->content = '';
-        $this->loadComments();
+        $this->cargaComentario();
+    }
+
+    public function borraComentario($id)
+    {
+        $comentario = Comentario::findOrFail($id);
+        $user = auth()->user();
+
+        if ($comentario->user_id !== $user->id && !$user->hasRole('admin')) {
+            abort(403);
+        }
+
+        $comentario->delete();
+        $this->cargaComentario();
     }
 
     public function render()

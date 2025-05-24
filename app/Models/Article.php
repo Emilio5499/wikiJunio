@@ -63,4 +63,12 @@ class Article extends Model
                 ->orWhere('content', 'like', "%{$term}%");
         });
     }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class)
+            ->withPivot('usage_type')
+            ->withTimestamps();
+    }
+
 }

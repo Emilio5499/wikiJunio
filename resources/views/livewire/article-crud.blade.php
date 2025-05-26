@@ -1,8 +1,18 @@
 <div>
     <form wire:submit.prevent="create" class="space-y-2">
-        <input wire:model="title" type="text" placeholder="Título" class="border rounded w-full p-2">
-        <textarea wire:model="content" placeholder="Contenido" class="border rounded w-full p-2"></textarea>
-        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Crear Artículo</button>
+        <x-input label="Título" name="title" id="title" :value="$article->title ?? ''" />
+        <x-textarea label="Contenido" name="content" id="content" :value="$article->content ?? ''" />
+        <x-select label="Categoría" name="category_id" id="category_id" wire:model="category_id">
+            <option value="">Elegir categoría</option>
+            @foreach ($categories as $category)
+                <option value="{{ $category->id }}">{{ $category->name }}</option>
+            @endforeach
+        </x-select>
+
+        <button type="submit"
+                class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+            {{ $editing ? 'Actualizar' : 'Crear post' }}
+        </button>
     </form>
 
     <hr class="my-4">

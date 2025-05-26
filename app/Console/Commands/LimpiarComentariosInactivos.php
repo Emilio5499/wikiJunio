@@ -46,7 +46,7 @@ class LimpiarComentariosInactivos extends Command
 
         Comentario::whereIn('id', $comentarios->pluck('id'))->delete();
 
-        $this->info("$total comentarios borrados.");
+        $this->info("$total Se eliminaron $total comentarios.");
 
         return Command::SUCCESS;
     }

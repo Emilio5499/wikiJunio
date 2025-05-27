@@ -3,7 +3,7 @@
 
     @auth
         <form wire:submit.prevent="creaComentario">
-            <x-textarea label="Contenido" name="content" id="content" :value="$article->content ?? ''" />
+            <x-textarea name="content" label="Comentario" wire:model="content" />
             <button type="submit" class="mt-2 px-4 py-1 bg-blue-500 text-white rounded">Comentar</button>
         </form>
     @else

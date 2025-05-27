@@ -104,7 +104,7 @@ it('logged user cannot delete other user comment', function () {
 
     $this->assertDatabaseHas('comentarios', [
         'id' => $comentario->id,
-        'content' => 'Comentario usuario 1',
+        'content' => 'Original',
     ]);
 });
 
@@ -174,3 +174,4 @@ it('admin cannot edit other user comment', function () {
         'content' => 'Original',
     ]);
 });
+

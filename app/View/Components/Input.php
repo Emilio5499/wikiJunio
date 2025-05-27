@@ -2,24 +2,26 @@
 
 namespace App\View\Components;
 
-use Closure;
-use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
 class Input extends Component
 {
-    /**
-     * Create a new component instance.
-     */
-    public function __construct()
+    public string $name;
+    public string $id;
+    public string $label;
+    public ?string $value;
+    public string $type;
+
+    public function __construct(string $name, string $label = '', string $id = '', string $value = null, string $type = 'text')
     {
-        //
+        $this->name = $name;
+        $this->label = $label ?: ucfirst(str_replace('_', ' ', $name));
+        $this->id = $id ?: $name;
+        $this->value = $value;
+        $this->type = $type;
     }
 
-    /**
-     * Get the view / contents that represent the component.
-     */
-    public function render(): View|Closure|string
+    public function render()
     {
         return view('components.input');
     }

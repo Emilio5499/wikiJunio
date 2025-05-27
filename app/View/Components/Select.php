@@ -11,9 +11,19 @@ class Select extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct()
+    public string $label;
+    public string $name;
+    public ?string $id;
+    public ?string $value;
+    public ?int $rows;
+
+    public function __construct($label, $name, $id = null, $value = null, $rows = 4)
     {
-        //
+        $this->label = $label;
+        $this->name = $name;
+        $this->id = $id ?? $name;
+        $this->value = $value;
+        $this->rows = $rows;
     }
 
     /**

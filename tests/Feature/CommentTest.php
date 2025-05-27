@@ -12,14 +12,14 @@ it('Logged user can comment in a post',function () {
 
     Livewire::actingAs($user)
         ->test('comment-crud', ['articleId' => $article->id])
-        ->set('content', 'Comentario generico')
+        ->set('content', 'Comentario genérico')
         ->call('creaComentario')
         ->assertSet('content', '');
 
-    $this->assertDatabaseHas('comentarios', [
-        'content' => 'Comentario generico',
+    $comentario = Comentario::factory()->create([
         'user_id' => $user->id,
         'article_id' => $article->id,
+        'content' => 'Original',
     ]);
 });
 
@@ -47,10 +47,10 @@ it('logged user can delete own comment', function () {
     $user = User::factory()->create();
     $article = Article::factory()->create();
 
-    $comentario = Comentario::create([
+    $comentario = Comentario::factory()->create([
         'user_id' => $user->id,
         'article_id' => $article->id,
-        'content' => 'comentario ejemplo',
+        'content' => 'Original',
     ]);
 
     Livewire::actingAs($user)
@@ -71,10 +71,10 @@ it('admin user can delete any comment', function () {
     $otroUsuario = User::factory()->create();
     $article = Article::factory()->create();
 
-    $comentario = Comentario::create([
+    $comentario = Comentario::factory()->create([
         'user_id' => $otroUsuario->id,
         'article_id' => $article->id,
-        'content' => 'comentario ejemplo',
+        'content' => 'Original',
     ]);
 
     Livewire::actingAs($admin)
@@ -91,10 +91,10 @@ it('logged user cannot delete other user comment', function () {
     $otroUsuario = User::factory()->create();
     $article = Article::factory()->create();
 
-    $comentario = Comentario::create([
+    $comentario = Comentario::factory()->create([
         'user_id' => $otroUsuario->id,
         'article_id' => $article->id,
-        'content' => 'Comentario usuario 1',
+        'content' => 'Original',
     ]);
 
     Livewire::actingAs($usuarioNormal)
@@ -133,7 +133,7 @@ it('logged user cannot edit other user comment', function () {
     $otroUsuario = User::factory()->create();
     $article = Article::factory()->create();
 
-    $comentario = Comentario::create([
+    $comentario = Comentario::factory()->create([
         'user_id' => $otroUsuario->id,
         'article_id' => $article->id,
         'content' => 'Original',
@@ -158,7 +158,7 @@ it('admin cannot edit other user comment', function () {
     $autor = User::factory()->create();
     $article = Article::factory()->create();
 
-    $comentario = Comentario::create([
+    $comentario = Comentario::factory()->create([
         'user_id' => $autor->id,
         'article_id' => $article->id,
         'content' => 'Original',

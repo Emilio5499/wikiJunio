@@ -9,20 +9,22 @@ class PublicArticleController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->input('search');
+        $categoriaId = $request->input('categoria'); // ej: /wiki?categoria=2
+        $minComentarios = $request->input('min', 0); // ej: /wiki?min=5
 
-        $articles = Article::query()
-            ->when($search, fn ($query) =>
-            $query->where('title', 'like', "%$search%")
-                ->orWhere('content', 'like', "%$search%"))
-            ->latest()
+        $articulos = Article::publicadosRecientes()
+            ->when($categoriaId, fn($q) => $q->porCategoria($categoriaId))
+            ->when($minComentarios, fn($q) => $q->conMuchosComentarios($minComentarios))
+            ->with(['category', 'user', 'tags'])
             ->paginate(10);
 
-        return view('public.articles.index', compact('articles', 'search'));
+        return view('wiki.index', compact('articulos'));
     }
 
     public function show(Article $article)
     {
-        return view('public.articles.show', compact('article'));
+        $article->load(['user', 'category', 'tags', 'comentarios.user']);
+
+        return view('wiki.show', compact('article'));
     }
 }

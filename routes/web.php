@@ -4,60 +4,36 @@ use App\Http\Controllers\Api\ArticleApiController;
 use App\Http\Controllers\ArticlePdfController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicArticleController;
-use App\Models\Article;
 use Illuminate\Support\Facades\Route;
+use App\Models\Article;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [PublicArticleController::class, 'index'])->name('public.articles.index');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/articles/{article}', [PublicArticleController::class, 'show'])->name('public.articles.show');
 
-Route::middleware('auth')->group(function () {
+Route::get('/wiki', [PublicArticleController::class, 'index'])->name('wiki.index');
+Route::get('/wiki/{article}', [PublicArticleController::class, 'show'])->name('wiki.show');
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
 
-Route::get('/wiki', function () {
-    return view('wiki');
-})->middleware('auth');
+    Route::get('/articles/{article}/download-pdf', [ArticlePdfController::class, 'download'])
+        ->name('articles.downloadPdf');
 
-Route::get('/', function () {
-    $articles = Article::latest()->with('user')->get();
-    return view('public', compact('articles'));
-});
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/articles', [ArticleApiController::class, 'store']);
-});
-
-Route::get('/articles/{article}/download-pdf', [ArticlePdfController::class, 'download'])
-    ->name('articles.downloadPdf');
-
-Route::get('/admin/categories', function () {
-    return view('admin.categories');
-})->middleware('auth');
-
-Route::get('/', [PublicArticleController::class, 'index'])->name('public.articles.index');
-Route::get('/articles/{article}', [PublicArticleController::class, 'show'])->name('public.articles.show');
-
-Route::get('/', function () {
-    $articles = App\Models\Article::latest()->with('user')->get();
-    return view('public', compact('articles'));
-});
-
-Route::middleware(['auth', 'permission:manage articles'])->group(function () {
-    Route::get('/wiki', function () {
-        return view('wiki');
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/articles', [ArticleApiController::class, 'store']);
     });
-});
 
-Route::middleware(['auth', 'permission:manage categories'])->group(function () {
-    Route::get('/admin/categories', function () {
-        return view('admin.categories');
+    Route::middleware('permission:manage articles')->group(function () {
+        Route::get('/wiki/admin', fn () => view('wiki'))->name('admin.wiki');
+    });
+
+    Route::middleware('permission:manage categories')->group(function () {
+        Route::get('/admin/categories', fn () => view('admin.categories'))->name('admin.categories');
     });
 });
 

@@ -9,16 +9,19 @@
             <input type="text" name="search" value="{{ $search }}" class="form-control mb-3">
         </form>
 
-        @foreach ($articles as $article)
-            <div class="card mb-2">
-                <div class="card-body">
-                    <h4><a href="{{ route('public.articles.show', $article) }}">{{ $article->title }}</a></h4>
-                    <p>{{ Str::limit($article->content, 150) }}</p>
-                </div>
+        @foreach ($articulos as $articulo)
+            <div class="mb-4">
+                <h2 class="text-xl font-bold">
+                    <a href="{{ route('wiki.show', $articulo) }}">{{ $articulo->title }}</a>
+                </h2>
+                <p class="text-sm text-gray-600">
+                    Por {{ $articulo->user->name }} - {{ $articulo->created_at->diffForHumans() }}
+                </p>
+                <p class="mt-2">{{ Str::limit($articulo->content, 150) }}</p>
             </div>
         @endforeach
 
-        {{ $articles->withQueryString()->links() }}
+        {{ $articulos->links() }}
     </div>
 
     @foreach ($articles as $article)

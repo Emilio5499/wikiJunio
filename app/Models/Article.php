@@ -81,10 +81,10 @@ class Article extends Model
         return $query->orderBy('created_at', 'desc');
     }
 
-    public function scopeMuchosComentarios($query, $minComentarios = 3)
+    public function scopeMuchosComentarios($query, $min = 3)
     {
         return $query->withCount('comentarios')
-            ->having('comentarios_count', '>=', $minComentarios)
+            ->where('comentarios_count', '>=', $min)
             ->orderBy('comentarios_count', 'desc');
     }
 

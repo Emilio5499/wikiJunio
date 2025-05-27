@@ -27,3 +27,16 @@ it('filter by category', function () {
     expect($filtrados)->toHaveCount(1);
     expect($filtrados->first()->category_id)->toBe($categoria1->id);
 });
+
+it('returns posts with many comments', function () {
+    $conMuchos = Article::factory()->create();
+    $conPocos = Article::factory()->create();
+
+    Comentario::factory()->count(5)->create(['article_id' => $conMuchos->id]);
+    Comentario::factory()->count(2)->create(['article_id' => $conPocos->id]);
+
+    $resultados = Article::MuchosComentarios(3)->get();
+
+    expect($resultados)->toHaveCount(1);
+    expect($resultados->first()->id)->toBe($conMuchos->id);
+});

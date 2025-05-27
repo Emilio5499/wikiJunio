@@ -38,6 +38,11 @@ class Article extends Model
         return $this->hasMany(Comentario::class);
     }
 
+    public function comentarios()
+    {
+        return $this->hasMany(Comentario::class);
+    }
+
     public function collaborators()
     {
         return $this->belongsToMany(User::class, 'article_user')
@@ -69,6 +74,23 @@ class Article extends Model
         return $this->belongsToMany(Tag::class)
             ->withPivot('usage_type')
             ->withTimestamps();
+    }
+
+    public function scopePublicadosRecientes($query)
+    {
+        return $query->orderBy('created_at', 'desc');
+    }
+
+    public function scopeMuchosComentarios($query, $minComentarios = 3)
+    {
+        return $query->withCount('comentarios')
+            ->having('comentarios_count', '>=', $minComentarios)
+            ->orderBy('comentarios_count', 'desc');
+    }
+
+    public function scopePorCategoria($query, $categoriaId)
+    {
+        return $query->where('category_id', $categoriaId);
     }
 
 }

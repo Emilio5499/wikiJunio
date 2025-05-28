@@ -9,6 +9,21 @@ use App\Models\Article;
 
 class ArticleApiController extends Controller
 {
+    /**
+     * Listar todos los posts
+     *
+     * @group posts
+     * @response 200 {
+     *   "data": [
+     *     {
+     *       "id": 1,
+     *       "title": "post de ejemplo",
+     *       "content": "Contenido largo...",
+     *       "user_id": 1
+     *     }
+     *   ]
+     * }
+     */
     public function index()
     {
         $articles = auth()->user()->articles()->with('category', 'collaborators')->get();
@@ -49,7 +64,12 @@ class ArticleApiController extends Controller
         return response()->json(['message' => 'post borrado']);
     }
 
-
+    /**
+     * Crear post nuevo
+     *
+     * @authenticated
+     * @group posts
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([

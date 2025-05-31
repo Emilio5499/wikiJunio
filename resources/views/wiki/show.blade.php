@@ -11,18 +11,18 @@
         {!! $article->content !!}
     </div>
 
-    @if($article->tags->count())
+    @if ($article->tags->count())
         <div class="mb-4">
             <strong>Tags:</strong>
             @foreach ($article->tags as $tag)
                 <span class="inline-block bg-blue-100 text-blue-700 px-2 py-1 text-xs rounded">
-                {{ $tag->name }}
-            </span>
+                    {{ $tag->name }}
+                </span>
             @endforeach
         </div>
     @endif
 
     <a href="{{ route('wiki.index') }}" class="text-blue-600 underline">
-         Volver a la lista
+        Volver
     </a>
 @endsection

@@ -2,16 +2,40 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        //
+        $manageArticles = Permission::firstOrCreate(['name' => 'manage articles']);
+        $manageCategories = Permission::firstOrCreate(['name' => 'manage categories']);
+
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $userRole  = Role::firstOrCreate(['name' => 'user']);
+
+        $adminRole->givePermissionTo([$manageArticles, $manageCategories]);
+
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'Usuario admin',
+                'password' => Hash::make('contra1234'),
+            ]
+        );
+        $admin->assignRole($adminRole);
+
+        $user = User::firstOrCreate(
+            ['email' => 'user@example.com'],
+            [
+                'name' => 'Usuario normal',
+                'password' => Hash::make('contra1234'),
+            ]
+        );
+        $user->assignRole($userRole);
     }
 }

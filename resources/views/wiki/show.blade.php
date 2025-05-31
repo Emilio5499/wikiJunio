@@ -1,36 +1,28 @@
-<div class="container">
-    <h1>{{ $article->title }}</h1>
+@extends('layouts.app')
 
-    <p class="text-muted">
-        Por {{ $article->user->name ?? 'Anónimo' }} — {{ $article->created_at->diffForHumans() }}
+@section('content')
+    <h1 class="text-3xl font-bold mb-4">{{ $article->title }}</h1>
+
+    <p class="text-gray-600 mb-2">
+        Por {{ $article->user->name ?? 'Anónimo' }} • {{ $article->created_at->format('d/m/Y') }}
     </p>
 
-    @if ($article->tags->count())
-        <p>
+    <div class="prose max-w-none mb-4">
+        {!! $article->content !!}
+    </div>
+
+    @if($article->tags->count())
+        <div class="mb-4">
+            <strong>Tags:</strong>
             @foreach ($article->tags as $tag)
-                <span class="badge bg-info text-dark">{{ $tag->name }}</span>
+                <span class="inline-block bg-blue-100 text-blue-700 px-2 py-1 text-xs rounded">
+                {{ $tag->name }}
+            </span>
             @endforeach
-        </p>
+        </div>
     @endif
 
-    <hr>
-    <div>{!! nl2br(e($article->content)) !!}</div>
-
-    @if ($article->collaborators->count())
-        <hr>
-        <h5>Colaboradores</h5>
-        <ul>
-            @foreach ($article->collaborators as $user)
-                <li>{{ $user->name }}</li>
-            @endforeach
-        </ul>
-    @endif
-
-    <livewire:comment-crud :articleId="$article->id" />
-
-    <a href="{{ route('articles.downloadPdf', $article) }}" class="btn btn-primary mt-3">
-        Descargar
+    <a href="{{ route('wiki.index') }}" class="text-blue-600 underline">
+         Volver a la lista
     </a>
-
-    <a href="{{ route('public.articles.index') }}" class="btn btn-outline-secondary mt-4">← Volver</a>
-</div>
+@endsection

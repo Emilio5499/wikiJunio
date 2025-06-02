@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\ArticleApiController;
 use App\Http\Controllers\ArticlePdfController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicArticleController;
+use App\Http\Livewire\ArticleCrud;
 use Illuminate\Support\Facades\Route;
 use App\Models\Article;
 
@@ -23,6 +24,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/articles/{article}/download-pdf', [ArticlePdfController::class, 'download'])
         ->name('articles.downloadPdf');
+
+    Route::get('/articles/downloadAll', [ArticlePdfController::class, 'downloadAll'])
+        ->middleware('auth')
+        ->name('articles.downloadAll');
+
+    Route::get('/articles/create', [ArticleCrud::class, 'create'])
+        ->middleware(['auth', 'permission:manage articles'])
+        ->name('articles.create');
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/articles', [ArticleApiController::class, 'store']);

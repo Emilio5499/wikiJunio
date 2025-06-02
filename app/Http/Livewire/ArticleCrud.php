@@ -34,8 +34,10 @@ class ArticleCrud extends Component
             'title' => $this->title,
             'content' => $this->content,
         ]);
-        event(new ArticuloCreado($article));
 
+        event(new ArticuloCreado($article));
+        session()->flash('success', 'Post creado');
+        return redirect()->route('wiki.index');
     }
     public function mount()
     {

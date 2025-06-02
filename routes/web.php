@@ -29,9 +29,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('auth')
         ->name('articles.downloadAll');
 
-    Route::get('/articles/create', [ArticleCrud::class, 'create'])
-        ->middleware(['auth', 'permission:manage articles'])
-        ->name('articles.create');
+    Route::middleware(['auth', 'permission:manage articles'])->group(function () {
+        Route::get('/articles/create', ArticleCrud::class)->name('articles.create');
+    });
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/articles', [ArticleApiController::class, 'store']);

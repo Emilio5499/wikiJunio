@@ -4,9 +4,8 @@ use App\Http\Controllers\Api\ArticleApiController;
 use App\Http\Controllers\ArticlePdfController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicArticleController;
-use App\Http\Livewire\ArticleCrud;
+use App\Livewire\ArticleCrud;
 use Illuminate\Support\Facades\Route;
-use App\Models\Article;
 
 Route::get('/', [PublicArticleController::class, 'index'])->name('public.articles.index');
 

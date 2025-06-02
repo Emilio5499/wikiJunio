@@ -15,8 +15,6 @@ class Tag extends Model
 
     public function articles()
     {
-        return $this->belongsToMany(Article::class)
-            ->withPivot('usage_type')
-            ->withTimestamps();
+        return $this->belongsToMany(Article::class)->withPivot('usage_type');
     }
 }

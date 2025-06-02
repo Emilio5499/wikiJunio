@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use Illuminate\Http\Request;
+use App\Models\Tag;
 
 class PublicArticleController extends Controller
 {
     public function index(Request $request)
     {
-        $categoriaId = $request->input('categoria'); // ej: /wiki?categoria=2
-        $minComentarios = $request->input('min', 0); // ej: /wiki?min=5
+        $categoriaId = $request->input('categoria');
+        $minComentarios = $request->input('min', 0);
 
         $articulos = Article::publicadosRecientes()
             ->when($categoriaId, fn($q) => $q->porCategoria($categoriaId))

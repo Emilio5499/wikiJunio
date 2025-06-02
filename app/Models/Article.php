@@ -71,9 +71,7 @@ class Article extends Model
 
     public function tags()
     {
-        return $this->belongsToMany(Tag::class)
-            ->withPivot('usage_type')
-            ->withTimestamps();
+        return $this->belongsToMany(Tag::class)->withPivot('usage_type');
     }
 
     public function scopePublicadosRecientes($query)

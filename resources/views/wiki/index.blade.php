@@ -3,6 +3,20 @@
 @section('content')
     <h1 class="text-2xl font-bold mb-4">Posts</h1>
 
+    @auth
+        <div class="flex justify-between items-center mb-6">
+            <a href="{{ route('articles.create') }}"
+               class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Crear post
+            </a>
+
+            <a href="{{ route('articles.downloadAll') }}"
+               class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                Descargar todos
+            </a>
+        </div>
+    @endauth
+
     <form method="GET" class="mb-4">
         <input type="text" name="search" value="{{ request('search') }}"
                class="p-2 border rounded w-full max-w-md">
@@ -28,7 +42,7 @@
             @endif
         </div>
     @empty
-        <p>No hay posts públicos</p>
+        <p>No hay posts publicos</p>
     @endforelse
 
     {{ $articulos->links() }}

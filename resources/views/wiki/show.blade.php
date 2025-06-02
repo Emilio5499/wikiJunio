@@ -11,6 +11,16 @@
         {!! $article->content !!}
     </div>
 
+    @auth
+        <div class="mt-6">
+            @livewire('comment-crud', ['articleId' => $article->id])
+        </div>
+    @else
+        <p class="text-gray-600 mt-4">
+            <a href="{{ route('login') }}" class="text-blue-600 hover:underline">Inicia sesión</a> para comentar.
+        </p>
+    @endauth
+
     @if ($article->tags->count())
         <div class="mb-4">
             <strong>Tags:</strong>
@@ -21,6 +31,13 @@
             @endforeach
         </div>
     @endif
+
+    @auth
+        <a href="{{ route('articles.downloadPdf', $article) }}"
+           class="inline-block bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mb-4">
+            PDF
+        </a>
+    @endauth
 
     <a href="{{ route('wiki.index') }}" class="text-blue-600 underline">
         Volver

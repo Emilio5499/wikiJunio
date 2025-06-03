@@ -1,12 +1,13 @@
 <?php
+
 namespace App\Livewire;
 
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Tag;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
+
 class ArticleCrud extends Component
 {
     public $title = '';
@@ -14,6 +15,7 @@ class ArticleCrud extends Component
     public $category_id = '';
     public $tags = [];
     public $usage_types = [];
+
     public $editing = false;
     public $article_id;
 
@@ -48,14 +50,14 @@ class ArticleCrud extends Component
             ]);
         }
 
-        session()->flash('success', 'Post creado');
+        session()->flash('success', 'Artículo creado correctamente.');
         $this->resetForm();
         $this->articles = Auth::user()->articles()->with('tags')->latest()->get();
     }
 
     public function edit($id)
     {
-        $article = Auth::user()->articles()->findOrFail($id);
+        $article = Auth::user()->articles()->with('tags')->findOrFail($id);
 
         $this->editing = true;
         $this->article_id = $article->id;
@@ -86,9 +88,10 @@ class ArticleCrud extends Component
         foreach ($this->tags as $index => $tagId) {
             $syncData[$tagId] = ['usage_type' => $this->usage_types[$index] ?? 'post nuevo'];
         }
+
         $article->tags()->sync($syncData);
 
-        session()->flash('success', 'Post actualizado');
+        session()->flash('success', 'Artículo actualizado.');
         $this->resetForm();
         $this->articles = Auth::user()->articles()->with('tags')->latest()->get();
     }
@@ -109,3 +112,4 @@ class ArticleCrud extends Component
         return view('livewire.article-crud');
     }
 }
+

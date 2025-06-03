@@ -29,10 +29,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/articles', [ArticleApiController::class, 'store'])->middleware('auth:sanctum');
 });
 
-Route::middleware(['auth', 'permission:manage articles'])->group(function () {
-    Route::get('/articles/create', fn () => view('articles.create'))->name('articles.create');
-    Route::get('/wiki/admin', fn () => view('wiki'))->name('admin.wiki');
-});
+    Route::middleware(['auth'])->get('/articles/create', function () {
+        return view('articles.create');
+    })->name('articles.create');
+
+
 
 Route::middleware(['auth', 'permission:manage categories'])->get('/admin/categories', fn () => view('admin.categories'))->name('admin.categories');
 

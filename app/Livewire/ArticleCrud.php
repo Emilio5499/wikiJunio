@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Models\Article;
 use App\Models\Category;
 use App\Models\Tag;
 use Illuminate\Support\Facades\Auth;
@@ -10,24 +9,19 @@ use Livewire\Component;
 
 class ArticleCrud extends Component
 {
-    public $title = '';
-    public $content = '';
-    public $category_id = '';
-    public $tags = [];
-    public $usage_types = [];
-
+    public $title, $content, $category_id, $tags = [], $usage_types = [];
     public $editing = false;
     public $article_id;
 
-    public $articles;
     public $categories;
     public $availableTags;
+    public $articles;
 
     public function mount()
     {
         $this->categories = Category::all();
         $this->availableTags = Tag::all();
-        $this->articles = Auth::user()->articles()->latest()->get();
+        $this->articles = Auth::user()?->articles()->with('tags')->latest()->get() ?? collect();
     }
 
 

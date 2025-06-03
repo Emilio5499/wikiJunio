@@ -5,7 +5,7 @@ namespace App\Http\Livewire;
 use Livewire\Component;
 use App\Models\Category;
 
-class CategoryCrud extends Component
+class CategoriaCrud extends Component
 {
     public $name;
     public $categoryIdBeingEdited = null;

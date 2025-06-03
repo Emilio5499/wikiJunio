@@ -34,5 +34,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::middleware(['auth', 'permission:manage categories'])->get('/admin/categories', fn () => view('admin.categories'))->name('admin.categories');
+Route::middleware(['auth', 'permission:manage tags'])->get('/admin/tags', fn () => view('admin.tags'))->name('admin.tags');
 
 require __DIR__.'/auth.php';

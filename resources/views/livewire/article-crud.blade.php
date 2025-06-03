@@ -24,7 +24,7 @@
 
         <x-textarea label="Contenido" name="content" id="content" wire:model.defer="content" />
 
-        <x-select label="Categoría" name="category_id" id="category_id" wire:model="category_id">
+        <x-select label="Categoria" name="category_id" id="category_id" wire:model="category_id">
             <option value="">Categorias</option>
             @foreach ($categories as $category)
                 <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -35,9 +35,11 @@
             <label class="block font-semibold mb-2">Tags</label>
 
             @if ($availableTags->count())
-                <label class="block font-semibold mb-2">Etiquetas (Tags)</label>
+                <label class="block font-semibold mb-2">Tags</label>
 
-                @foreach ($availableTags as $tag)
+                @dump($availableTags)
+
+            @foreach ($availableTags as $tag)
                     <div class="flex items-center space-x-4 mb-2">
                         <input type="checkbox" wire:model="tags" value="{{ $tag->id }}" id="tag-{{ $tag->id }}">
                         <label for="tag-{{ $tag->id }}">{{ $tag->name }}</label>
@@ -45,7 +47,6 @@
                         @if (collect($tags)->contains((string) $tag->id))
                             <select wire:model="usage_types.{{ $tag->id }}"
                                     class="border rounded p-1 text-sm">
-                                <option value="">Tipo de post</option>
                                 <option value="post nuevo">Post nuevo</option>
                                 <option value="debate">Debate</option>
                                 <option value="spoiler">Spoiler</option>

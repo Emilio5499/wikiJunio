@@ -27,8 +27,9 @@ class ArticleCrud extends Component
     {
         $this->categories = Category::all();
         $this->availableTags = Tag::all();
-        $this->articles = Auth::user()->articles()->with('tags')->latest()->get();
+        $this->articles = Auth::user()->articles()->latest()->get();
     }
+
 
     public function create()
     {

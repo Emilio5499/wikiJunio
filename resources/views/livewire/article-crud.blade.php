@@ -34,23 +34,28 @@
         <div>
             <label class="block font-semibold mb-2">Tags</label>
 
-            @foreach ($availableTags as $tag)
-                <div class="flex items-center space-x-4 mb-2">
-                    <input type="checkbox" wire:model="tags" value="{{ $tag->id }}" id="tag-{{ $tag->id }}">
-                    <label for="tag-{{ $tag->id }}">{{ $tag->name }}</label>
+            @if ($availableTags->count())
+                <label class="block font-semibold mb-2">Etiquetas (Tags)</label>
 
-                    @if (collect($tags)->contains((string) $tag->id))
-                        <select wire:model="usage_types.{{ $tag->id }}"
-                                class="border rounded p-1 text-sm">
-                            <option value="">Tipo de post</option>
-                            <option value="post nuevo">Post nuevo</option>
-                            <option value="debate">Debate</option>
-                            <option value="spoiler">Spoiler</option>
-                        </select>
+                @foreach ($availableTags as $tag)
+                    <div class="flex items-center space-x-4 mb-2">
+                        <input type="checkbox" wire:model="tags" value="{{ $tag->id }}" id="tag-{{ $tag->id }}">
+                        <label for="tag-{{ $tag->id }}">{{ $tag->name }}</label>
 
-                    @endif
-                </div>
-            @endforeach
+                        @if (collect($tags)->contains((string) $tag->id))
+                            <select wire:model="usage_types.{{ $tag->id }}"
+                                    class="border rounded p-1 text-sm">
+                                <option value="">Tipo de post</option>
+                                <option value="post nuevo">Post nuevo</option>
+                                <option value="debate">Debate</option>
+                                <option value="spoiler">Spoiler</option>
+                            </select>
+                        @endif
+                    </div>
+                @endforeach
+            @else
+            @endif
+
         </div>
 
         <div class="flex space-x-4">

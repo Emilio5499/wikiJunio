@@ -3,28 +3,47 @@
 namespace Database\Seeders;
 
 use App\Models\Article;
+use App\Models\Category;
 use App\Models\Comentario;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class ArticleAndCommentSeeder extends Seeder
 {
     public function run(): void
     {
-        $users = User::all();
+        $user = User::firstOrCreate([
+            'email' => 'user@wiki.com'
+        ], [
+            'name' => 'Usuario',
+            'password' => bcrypt('password'),
+            'email_verified_at' => now(),
+        ]);
 
-        if ($users->isEmpty()) {
-            $this->command->warn('No hay usuarios');
-            return;
-        }
+        $categories = Category::factory()->count(3)->create();
 
-        Article::factory(10)->create()->each(function ($article) use ($users) {
-            $article->user_id = $users->random()->id;
+        $tags = Tag::factory()->count(5)->create();
+
+        $usageTypes = ['post nuevo', 'spoiler', 'debate'];
+
+        Article::factory()->count(5)->create([
+            'user_id' => $user->id,
+        ])->each(function ($article) use ($categories, $tags, $usageTypes, $user) {
+            $article->category_id = $categories->random()->id;
             $article->save();
 
-            Comentario::factory(rand(1, 5))->create([
+            $syncData = [];
+            $selectedTags = $tags->random(rand(1, 3));
+            foreach ($selectedTags as $tag) {
+                $syncData[$tag->id] = ['usage_type' => collect($usageTypes)->random()];
+            }
+            $article->tags()->sync($syncData);
+
+            Comentario::factory()->count(3)->create([
                 'article_id' => $article->id,
-                'user_id' => $users->random()->id,
+                'user_id' => $user->id,
             ]);
         });
     }

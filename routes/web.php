@@ -1,11 +1,13 @@
 <?php
 
-use App\Http\Controllers\Api\ArticleApiController;
-use App\Http\Controllers\ArticlePdfController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\PublicArticleController;
-use App\Livewire\ArticleCrud;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\{
+    Api\ArticleApiController,
+    ArticlePdfController,
+    ProfileController,
+    PublicArticleController
+};
+use App\Livewire\ArticleCrud;
 
 Route::get('/', [PublicArticleController::class, 'index'])->name('public.articles.index');
 
@@ -21,28 +23,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/articles/{article}/download-pdf', [ArticlePdfController::class, 'download'])
-        ->name('articles.downloadPdf');
+    Route::get('/articles/{article}/download-pdf', [ArticlePdfController::class, 'download'])->name('articles.downloadPdf');
+    Route::get('/articles/downloadAll', [ArticlePdfController::class, 'downloadAll'])->name('articles.downloadAll');
 
-    Route::get('/articles/downloadAll', [ArticlePdfController::class, 'downloadAll'])
-        ->middleware('auth')
-        ->name('articles.downloadAll');
-
-    Route::middleware(['auth', 'permission:manage articles'])->group(function () {
-        Route::get('/articles/create', ArticleCrud::class)->name('articles.create');
-    });
-
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/articles', [ArticleApiController::class, 'store']);
-    });
-
-    Route::middleware('permission:manage articles')->group(function () {
-        Route::get('/wiki/admin', fn () => view('wiki'))->name('admin.wiki');
-    });
-
-    Route::middleware('permission:manage categories')->group(function () {
-        Route::get('/admin/categories', fn () => view('admin.categories'))->name('admin.categories');
-    });
+    Route::post('/articles', [ArticleApiController::class, 'store'])->middleware('auth:sanctum');
 });
+
+Route::middleware(['auth', 'permission:manage articles'])->group(function () {
+    Route::get('/articles/create', fn () => view('articles.create'))->name('articles.create');
+    Route::get('/wiki/admin', fn () => view('wiki'))->name('admin.wiki');
+});
+
+Route::middleware(['auth', 'permission:manage categories'])->get('/admin/categories', fn () => view('admin.categories'))->name('admin.categories');
 
 require __DIR__.'/auth.php';

@@ -6,9 +6,10 @@
     @auth
         <div class="flex justify-between items-center mb-6">
             <a href="{{ route('articles.create') }}"
-               class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                Crear post
+               class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                Crear nuevo post
             </a>
+
 
             <a href="{{ route('articles.downloadAll') }}"
                class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">

@@ -9,6 +9,13 @@ use App\Http\Controllers\{
 };
 use App\Livewire\ArticleCrud;
 
+Route::get('/articles/create', function () {
+    return view('articles.create');
+})->name('articles.create');
+
+Route::get('/articles/{article}/download-pdf', [ArticlePdfController::class, 'download'])->name('articles.downloadPdf');
+Route::get('/articles/downloadAll', [ArticlePdfController::class, 'downloadAll'])->name('articles.downloadAll');
+
 Route::get('/', [PublicArticleController::class, 'index'])->name('public.articles.index');
 
 Route::get('/articles/{article}', [PublicArticleController::class, 'show'])->name('public.articles.show');
@@ -23,17 +30,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/articles/{article}/download-pdf', [ArticlePdfController::class, 'download'])->name('articles.downloadPdf');
-    Route::get('/articles/downloadAll', [ArticlePdfController::class, 'downloadAll'])->name('articles.downloadAll');
-
     Route::post('/articles', [ArticleApiController::class, 'store'])->middleware('auth:sanctum');
 });
-
-    Route::middleware(['auth'])->get('/articles/create', function () {
-        return view('articles.create');
-    })->name('articles.create');
-
-
 
 Route::middleware(['auth', 'permission:manage categories'])->get('/admin/categories', fn () => view('admin.categories'))->name('admin.categories');
 

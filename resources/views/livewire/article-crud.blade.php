@@ -9,32 +9,45 @@
         </div>
     @endif
 
+    @if ($errors->any())
+        <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4">
+            <ul class="text-sm list-disc list-inside">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <form wire:submit.prevent="{{ $editing ? 'update' : 'create' }}" class="space-y-4 bg-white p-6 rounded shadow">
         <x-input label="Título" name="title" id="title" wire:model.defer="title" />
 
         <x-textarea label="Contenido" name="content" id="content" wire:model.defer="content" />
 
         <x-select label="Categoría" name="category_id" id="category_id" wire:model="category_id">
-            <option value="">Categoria</option>
+            <option value="">Categorias</option>
             @foreach ($categories as $category)
                 <option value="{{ $category->id }}">{{ $category->name }}</option>
             @endforeach
         </x-select>
 
         <div>
-            <label class="block font-semibold mb-1">Tags</label>
-            @foreach ($availableTags as $index => $tag)
+            <label class="block font-semibold mb-2">Tags</label>
+
+            @foreach ($availableTags as $tag)
                 <div class="flex items-center space-x-4 mb-2">
                     <input type="checkbox" wire:model="tags" value="{{ $tag->id }}" id="tag-{{ $tag->id }}">
                     <label for="tag-{{ $tag->id }}">{{ $tag->name }}</label>
 
-                    @if (in_array($tag->id, $tags))
-                        <select wire:model="usage_types.{{ array_search($tag->id, $tags) }}"
+                    @if (collect($tags)->contains((string) $tag->id))
+                        <select wire:model="usage_types.{{ $tag->id }}"
                                 class="border rounded p-1 text-sm">
+                            <option value="">Tipo de post</option>
                             <option value="post nuevo">Post nuevo</option>
                             <option value="debate">Debate</option>
                             <option value="spoiler">Spoiler</option>
                         </select>
+
                     @endif
                 </div>
             @endforeach
@@ -55,7 +68,6 @@
         </div>
     </form>
 
-    {{-- Divider --}}
     <hr class="my-6">
 
     <div>

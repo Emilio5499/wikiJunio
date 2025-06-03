@@ -44,9 +44,9 @@ class ArticleCrud extends Component
             'category_id' => $this->category_id,
         ]);
 
-        foreach ($this->tags as $index => $tagId) {
+        foreach ($this->tags as $tagId) {
             $article->tags()->attach($tagId, [
-                'usage_type' => $this->usage_types[$index] ?? 'post nuevo',
+                'usage_type' => $this->usage_types[$tagId] ?? 'post nuevo',
             ]);
         }
 
@@ -65,7 +65,7 @@ class ArticleCrud extends Component
         $this->content = $article->content;
         $this->category_id = $article->category_id;
         $this->tags = $article->tags->pluck('id')->toArray();
-        $this->usage_types = $article->tags->pluck('pivot.usage_type')->toArray();
+        $this->usage_types = $article->tags->pluck('pivot.usage_type', 'id')->toArray();
     }
 
     public function update()
@@ -85,13 +85,12 @@ class ArticleCrud extends Component
         ]);
 
         $syncData = [];
-        foreach ($this->tags as $index => $tagId) {
-            $syncData[$tagId] = ['usage_type' => $this->usage_types[$index] ?? 'post nuevo'];
+        foreach ($this->tags as $tagId) {
+            $syncData[$tagId] = ['usage_type' => $this->usage_types[$tagId] ?? 'post nuevo'];
         }
-
         $article->tags()->sync($syncData);
 
-        session()->flash('success', 'Artículo actualizado.');
+        session()->flash('success', 'Post actualizado.');
         $this->resetForm();
         $this->articles = Auth::user()->articles()->with('tags')->latest()->get();
     }

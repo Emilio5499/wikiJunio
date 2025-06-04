@@ -32,12 +32,9 @@
         </x-select>
 
         <div>
-            <label class="block font-semibold mb-2">Tags</label>
 
             @if ($availableTags->count())
                 <label class="block font-semibold mb-2">Tags</label>
-
-                @dump($availableTags)
 
             @foreach ($availableTags as $tag)
                     <div class="flex items-center space-x-4 mb-2">

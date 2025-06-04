@@ -20,6 +20,7 @@
 
     <form method="GET" class="mb-4">
         <input type="text" name="search" value="{{ request('search') }}"
+               placeholder="Buscar"
                class="p-2 border rounded w-full max-w-md">
     </form>
 

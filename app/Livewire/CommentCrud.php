@@ -45,18 +45,18 @@ class CommentCrud extends Component
         $this->cargaComentario();
     }
 
-    public function borraComentario($id)
+    public function borraComment($commentId)
     {
-        $comentario = Comentario::findOrFail($id);
-        $user = auth()->user();
+        $comment = Comentario::findOrFail($commentId);
 
-        if ($comentario->user_id !== $user->id && !$user->hasRole('admin')) {
-            abort(403);
+        if (auth()->user()->id === $comment->user_id || auth()->user()->hasRole('admin')) {
+            $comment->delete();
+            session()->flash('success', 'Comentario borrado');
+        } else {
+            abort(403, 'No puede borrar este comentario');
         }
-
-        $comentario->delete();
-        $this->cargaComentario();
     }
+
 
     public function editaComentario($id, $newContent)
     {

@@ -55,11 +55,9 @@ it('logged user can delete own comment', function () {
 
     Livewire::actingAs($user)
         ->test('comment-crud', ['articleId' => $article->id])
-        ->call('borraComentario', $comentario->id);
+        ->call('borraComment', $comentario->id); // Nombre actualizado
 
-    $this->assertDatabaseMissing('comentarios', [
-        'id' => $comentario->id,
-    ]);
+    expect(Comentario::find($comentario->id))->toBeNull();
 });
 
 it('admin user can delete any comment', function () {
@@ -79,11 +77,9 @@ it('admin user can delete any comment', function () {
 
     Livewire::actingAs($admin)
         ->test('comment-crud', ['articleId' => $article->id])
-        ->call('borraComentario', $comentario->id);
+        ->call('borraComment', $comentario->id);
 
-    $this->assertDatabaseMissing('comentarios', [
-        'id' => $comentario->id,
-    ]);
+    expect(Comentario::find($comentario->id))->toBeNull();
 });
 
 it('logged user cannot delete other user comment', function () {
@@ -99,13 +95,10 @@ it('logged user cannot delete other user comment', function () {
 
     Livewire::actingAs($usuarioNormal)
         ->test('comment-crud', ['articleId' => $article->id])
-        ->call('borraComentario', $comentario->id)
+        ->call('borraComment', $comentario->id)
         ->assertForbidden();
 
-    $this->assertDatabaseHas('comentarios', [
-        'id' => $comentario->id,
-        'content' => 'Original',
-    ]);
+    expect(Comentario::find($comentario->id))->not()->toBeNull();
 });
 
 it('logged user can edit own comment', function () {

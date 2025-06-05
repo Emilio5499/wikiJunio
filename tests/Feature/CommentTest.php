@@ -168,3 +168,91 @@ it('admin cannot edit other user comment', function () {
     ]);
 });
 
+it('shows comments latest first', function () {
+    $user = User::factory()->create();
+    $article = Article::factory()->create();
+
+    Comentario::factory()->create([
+        'article_id' => $article->id,
+        'user_id' => $user->id,
+        'content' => 'Comentario viejo',
+        'created_at' => now()->subDay(),
+    ]);
+
+    Comentario::factory()->create([
+        'article_id' => $article->id,
+        'user_id' => $user->id,
+        'content' => 'Comentario nuevo',
+        'created_at' => now(),
+    ]);
+
+    $component = Livewire::actingAs($user)
+        ->test('comment-crud', ['articleId' => $article->id]);
+
+    $component->assertSeeInOrder([
+        'Comentario nuevo',
+        'Comentario viejo',
+    ]);
+});
+
+it('new comment visible after creation', function () {
+    $user = User::factory()->create();
+    $article = Article::factory()->create();
+
+    $component = Livewire::actingAs($user)
+        ->test('comment-crud', ['articleId' => $article->id])
+        ->set('content', 'Comentario nuevo')
+        ->call('creaComentario');
+
+    $component->assertSee('Comentario nuevo');
+});
+
+it('content field resets after comment', function () {
+    $user = User::factory()->create();
+    $article = Article::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test('comment-crud', ['articleId' => $article->id])
+        ->set('content', 'comentario')
+        ->call('creaComentario')
+        ->assertSet('content', '');
+});
+
+it('guest cannot see comment form', function () {
+    $article = \App\Models\Article::factory()->create();
+
+    $this->get(route('wiki.show', $article))
+        ->assertDontSee('comentario')
+        ->assertDontSee('Enviar');
+});
+
+it('user can see own comment after posting', function () {
+    $user = \App\Models\User::factory()->create();
+    $article = \App\Models\Article::factory()->create();
+
+    \App\Models\Comentario::factory()->create([
+        'article_id' => $article->id,
+        'user_id' => $user->id,
+        'content' => 'Mi propio comentario',
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('wiki.show', $article))
+        ->assertSee('Mi propio comentario');
+});
+
+it('comment is saved in the database', function () {
+    $user = \App\Models\User::factory()->create();
+    $article = \App\Models\Article::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test('comment-crud', ['articleId' => $article->id])
+        ->set('content', 'en bd')
+        ->call('creaComentario');
+
+    $this->assertDatabaseHas('comentarios', [
+        'content' => 'en bd',
+        'user_id' => $user->id,
+        'article_id' => $article->id,
+    ]);
+});

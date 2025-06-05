@@ -13,8 +13,13 @@ Route::get('/articles/create', function () {
     return view('articles.create');
 })->name('articles.create');
 
-Route::get('/articles/{article}/download-pdf', [ArticlePdfController::class, 'download'])->name('articles.downloadPdf');
-Route::get('/articles/downloadAll', [ArticlePdfController::class, 'downloadAll'])->name('articles.downloadAll');
+Route::get('/articles/{article}/download-pdf', [ArticlePdfController::class, 'download'])
+    ->middleware('auth')
+    ->name('articles.downloadPdf');
+
+Route::get('/articles/downloadAll', [ArticlePdfController::class, 'downloadAll'])
+    ->middleware('auth')
+    ->name('articles.downloadAll');
 
 Route::get('/', [PublicArticleController::class, 'index'])->name('public.articles.index');
 

@@ -40,3 +40,34 @@ it('returns posts with many comments', function () {
     expect($resultados)->toHaveCount(1);
     expect($resultados->first()->id)->toBe($conMuchos->id);
 });
+
+it('can combine scopes', function () {
+    $cat = Category::factory()->create();
+
+    $article1 = Article::factory()->create(['category_id' => $cat->id]);
+    $article2 = Article::factory()->create();
+
+    Comentario::factory()->count(3)->create(['article_id' => $article1->id]);
+    Comentario::factory()->count(5)->create(['article_id' => $article2->id]);
+
+    $result = Article::porCategoria($cat->id)->muchosComentarios(2)->get();
+
+    expect($result)->toHaveCount(1);
+    expect($result->first()->id)->toBe($article1->id);
+});
+
+it('does not filter if category is null', function () {
+    Article::factory()->count(2)->create();
+
+    $articles = Article::porCategoria(null)->get();
+
+    expect($articles)->toHaveCount(2);
+});
+
+it('muchosComentarios with 0 includes all articles', function () {
+    Article::factory()->count(2)->create();
+
+    $result = Article::muchosComentarios(0)->get();
+
+    expect($result)->toHaveCount(2);
+});

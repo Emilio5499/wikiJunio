@@ -13,8 +13,12 @@ class PublicArticleController extends Controller
         $categoriaId = $request->input('categoria');
         $minComentarios = $request->input('min', 0);
         $busqueda = $request->input('search');
+        $orden = $request->input('orden', 'recientes'); // valor por defecto
 
-        $articulos = Article::publicadosRecientes()
+        $articulos = Article::query()
+            ->when($orden === 'titulo_asc', fn($q) => $q->orderBy('title', 'asc'))
+            ->when($orden === 'titulo_desc', fn($q) => $q->orderBy('title', 'desc'))
+            ->when($orden === 'recientes', fn($q) => $q->orderByDesc('created_at')) // ya era tu default
             ->when($categoriaId, fn($q) => $q->porCategoria($categoriaId))
             ->when($minComentarios, fn($q) => $q->conMuchosComentarios($minComentarios))
             ->when($busqueda, function ($q) use ($busqueda) {
@@ -26,8 +30,9 @@ class PublicArticleController extends Controller
             ->with(['category', 'user', 'tags'])
             ->paginate(10);
 
-        return view('wiki.index', compact('articulos', 'categoriaId', 'minComentarios', 'busqueda'));
+        return view('wiki.index', compact('articulos', 'categoriaId', 'minComentarios', 'busqueda', 'orden'));
     }
+
 
     public function show(Article $article)
     {

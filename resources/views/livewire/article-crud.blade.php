@@ -84,6 +84,13 @@
                 <div class="mt-2">
                     <button wire:click="edit({{ $article->id }})"
                             class="text-blue-600 text-sm hover:underline">Editar</button>
+
+                    @if (auth()->user()->id === $article->user_id || auth()->user()->hasRole('admin'))
+                        <button wire:click="deleteArticle({{ $article->id }})"
+                                class="text-red-600 text-sm hover:underline">
+                            Borrar
+                        </button>
+                    @endif
                 </div>
             </div>
         @empty

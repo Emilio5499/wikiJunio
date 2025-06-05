@@ -8,13 +8,11 @@
                     </a>
                 </div>
 
-                <!-- ENLACES PRINCIPALES -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    {{-- ENLACE A WIKI / POSTS --}}
                     <x-nav-link :href="route('wiki.index')" :active="request()->routeIs('wiki.index')">
                         {{ __('Posts') }}
                     </x-nav-link>
@@ -60,7 +58,6 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
-            {{-- Enlace a Posts en menú móvil --}}
             <x-responsive-nav-link :href="route('wiki.index')" :active="request()->routeIs('wiki.index')">
                 {{ __('Posts') }}
             </x-responsive-nav-link>

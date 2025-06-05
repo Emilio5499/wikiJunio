@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Article;
 use App\Models\Category;
 use App\Models\Tag;
 use Illuminate\Support\Facades\Auth;
@@ -88,6 +89,18 @@ class ArticleCrud extends Component
         session()->flash('success', 'Post actualizado.');
         $this->resetForm();
         $this->articles = Auth::user()->articles()->with('tags')->latest()->get();
+    }
+
+    public function deleteArticle($id)
+    {
+        $article = Article::findOrFail($id);
+
+        if (auth()->user()->id === $article->user_id || auth()->user()->hasRole('admin')) {
+            $article->delete();
+            session()->flash('success', 'Post eliminado');
+        } else {
+            abort(403);
+        }
     }
 
     public function resetForm()

@@ -13,14 +13,14 @@ class PublicArticleController extends Controller
         $categoriaId = $request->input('categoria');
         $minComentarios = $request->input('min', 0);
         $busqueda = $request->input('search');
-        $orden = $request->input('orden', 'recientes'); // valor por defecto
+        $orden = $request->input('orden', 'recientes');
 
         $articulos = Article::query()
             ->when($orden === 'titulo_asc', fn($q) => $q->orderBy('title', 'asc'))
             ->when($orden === 'titulo_desc', fn($q) => $q->orderBy('title', 'desc'))
-            ->when($orden === 'recientes', fn($q) => $q->orderByDesc('created_at')) // ya era tu default
+            ->when($orden === 'recientes', fn($q) => $q->orderByDesc('created_at'))
             ->when($categoriaId, fn($q) => $q->porCategoria($categoriaId))
-            ->when($minComentarios, fn($q) => $q->conMuchosComentarios($minComentarios))
+            ->when($minComentarios, fn($q) => $q->muchosComentarios($minComentarios))
             ->when($busqueda, function ($q) use ($busqueda) {
                 $q->where(function ($query) use ($busqueda) {
                     $query->where('title', 'like', "%{$busqueda}%")

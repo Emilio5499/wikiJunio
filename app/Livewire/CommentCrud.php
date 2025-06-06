@@ -1,12 +1,13 @@
 <?php
 
 namespace App\Livewire;
-
 use App\Models\Comentario;
 use Livewire\Component;
 
 class CommentCrud extends Component
 {
+    public $editingId = null;
+    public $editContent = '';
     public $articleId;
     public $content;
     public $comments;
@@ -45,33 +46,59 @@ class CommentCrud extends Component
         $this->cargaComentario();
     }
 
-    public function borraComment($commentId)
+    public function startEdit($commentId)
     {
-        $comment = Comentario::findOrFail($commentId);
+        $comentario = Comentario::findOrFail($commentId);
 
-        if (auth()->user()->id === $comment->user_id || auth()->user()->hasRole('admin')) {
-            $comment->delete();
-            session()->flash('success', 'Comentario borrado');
-        } else {
-            abort(403, 'No puede borrar este comentario');
+        if (auth()->id() !== $comentario->user_id && !auth()->user()->hasRole('admin')) {
+            abort(403);
         }
+
+        $this->editingId = $comentario->id;
+        $this->editContent = $comentario->content;
     }
 
-
-    public function editaComentario($id, $newContent)
+    public function updateComment()
     {
-        $comentario = \App\Models\Comentario::findOrFail($id);
-        $user = auth()->user();
+        $this->validate([
+            'editContent' => 'required|string|min:1',
+        ]);
 
-        if ($comentario->user_id !== $user->id) {
+        $comentario = Comentario::findOrFail($this->editingId);
+
+        if (auth()->id() !== $comentario->user_id && !auth()->user()->hasRole('admin')) {
             abort(403);
         }
 
         $comentario->update([
-            'content' => $newContent,
+            'content' => $this->editContent,
         ]);
 
-        $this->cargaComentario();
+        session()->flash('success', 'Comentario actualizado.');
+        $this->editingId = null;
+        $this->editContent = '';
+        $this->loadComentarios();
+    }
+
+    public function deleteComment($id)
+    {
+        $comentario = Comentario::findOrFail($id);
+
+        if (auth()->id() !== $comentario->user_id && !auth()->user()->hasRole('admin')) {
+            abort(403);
+        }
+
+        $comentario->delete();
+
+        session()->flash('success', 'Comentario eliminado.');
+        $this->loadComentarios();
+    }
+
+    public function loadComentarios()
+    {
+        $this->comments = Comentario::where('article_id', $this->articleId)
+            ->orderByDesc('created_at')
+            ->get();
     }
 
     public function render()

@@ -10,6 +10,8 @@ use Livewire\Component;
 
 class ArticleCrud extends Component
 {
+    protected $listeners = ['edit', 'deleteArticle'];
+
     public $title, $content, $category_id, $tags = [], $usage_types = [];
     public $editing = false;
     public $article_id;
@@ -17,7 +19,6 @@ class ArticleCrud extends Component
     public $categories;
     public $availableTags;
     public $articles;
-
     public function mount()
     {
         $this->categories = Category::all();
@@ -53,7 +54,11 @@ class ArticleCrud extends Component
 
     public function edit($id)
     {
-        $article = Auth::user()->articles()->with('tags')->findOrFail($id);
+        $article = Article::findOrFail($id);
+
+        if (auth()->id() !== $article->user_id && !auth()->user()->hasRole('admin')) {
+            abort(403);
+        }
 
         $this->editing = true;
         $this->article_id = $article->id;
@@ -72,7 +77,11 @@ class ArticleCrud extends Component
             'category_id' => 'required|exists:categories,id',
         ]);
 
-        $article = Auth::user()->articles()->findOrFail($this->article_id);
+        $article = Article::findOrFail($this->article_id);
+
+        if (auth()->id() !== $article->user_id && !auth()->user()->hasRole('admin')) {
+            abort(403);
+        }
 
         $article->update([
             'title' => $this->title,
@@ -84,24 +93,34 @@ class ArticleCrud extends Component
         foreach ($this->tags as $tagId) {
             $syncData[$tagId] = ['usage_type' => $this->usage_types[$tagId] ?? 'post nuevo'];
         }
+
         $article->tags()->sync($syncData);
 
         session()->flash('success', 'Post actualizado.');
         $this->resetForm();
-        $this->articles = Auth::user()->articles()->with('tags')->latest()->get();
+        $this->loadArticles();
     }
 
     public function deleteArticle($id)
     {
         $article = Article::findOrFail($id);
 
-        if (auth()->user()->id === $article->user_id || auth()->user()->hasRole('admin')) {
-            $article->delete();
-            session()->flash('success', 'Post eliminado');
-        } else {
+        if (auth()->id() !== $article->user_id && !auth()->user()->hasRole('admin')) {
             abort(403);
         }
+
+        $article->delete();
+        session()->flash('success', 'Post borrado');
+        $this->articles = Auth::user()->articles()->with('tags')->latest()->get();
     }
+
+    public function loadArticles()
+    {
+        $this->articles = auth()->user()->hasRole('admin')
+            ? Article::with('user', 'tags')->latest()->get()
+            : Auth::user()->articles()->with('tags')->latest()->get();
+    }
+
 
     public function resetForm()
     {

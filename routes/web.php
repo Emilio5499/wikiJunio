@@ -21,11 +21,16 @@ Route::get('/articles/downloadAll', [ArticlePdfController::class, 'downloadAll']
     ->middleware('auth')
     ->name('articles.downloadAll');
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/articles/{article}/edit', [ArticleCrud::class, 'edit'])->name('articles.edit');
+    Route::delete('/articles/{article}', [ArticleCrud::class, 'destroy'])->name('articles.destroy');
+});
+
 Route::get('/', [PublicArticleController::class, 'index'])->name('public.articles.index');
 
 Route::get('/articles/{article}', [PublicArticleController::class, 'show'])->name('public.articles.show');
 
-Route::get('/wiki', [PublicArticleController::class, 'index'])->name('wiki.index');
+Route::get('/wiki', \App\Livewire\PostList::class)->name('wiki.index');
 Route::get('/wiki/{article}', [PublicArticleController::class, 'show'])->name('wiki.show');
 
 Route::middleware(['auth', 'verified'])->group(function () {

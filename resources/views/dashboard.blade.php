@@ -16,7 +16,7 @@
                 <p class="text-gray-600">No hay posts aun.</p>
             @endforelse
 
-            <a href="{{ route('wiki.index') }}" class="text-blue-600 hover:underline mt-2 inline-block">Ver todos tus posts</a>
+            <a href="{{ route('wiki.index') }}" class="text-blue-600 hover:underline mt-2 inline-block">Ver todos los posts</a>
         </div>
 
         <div class="mb-8">

@@ -51,7 +51,29 @@
     </form>
 
     @forelse ($articulos as $article)
-        <div class="mb-6 p-4 bg-white shadow rounded">
+        <div class="mb-6 p-4 bg-white shadow rounded relative">
+
+            @auth
+                @if (Auth::id() === $article->user_id || Auth::user()->hasRole('admin'))
+                    <div class="absolute top-2 right-2 flex space-x-2">
+                        <button
+                            wire:click="$emit('edit', {{ $article->id }})"
+                            class="text-blue-600 text-sm hover:underline"
+                        >
+                            Editar
+                        </button>
+
+                        <button
+                            wire:click="$emit('deleteArticle', {{ $article->id }})"
+                            onclick="return confirm('¿Borrar este post?')"
+                            class="text-red-600 text-sm hover:underline"
+                        >
+                            Borrar
+                        </button>
+                    </div>
+                @endif
+            @endauth
+
             <h2 class="text-xl font-semibold">
                 <a href="{{ route('wiki.show', $article) }}">{{ $article->title }}</a>
             </h2>
@@ -71,8 +93,10 @@
             @endif
         </div>
     @empty
-        <p>No hay posts publicos.</p>
+        <p>No hay posts</p>
     @endforelse
 
     {{ $articulos->links() }}
+
+    @livewire('article-crud')
 @endsection

@@ -80,12 +80,15 @@
             <div class="border p-4 mb-3 rounded bg-gray-50">
                 <h3 class="font-bold text-lg">{{ $article->title }}</h3>
                 <p class="text-sm text-gray-700 mb-1">{{ Str::limit($article->content, 120) }}</p>
-                <small class="text-gray-600">Por: {{ $article->user->name }}</small>
-                <div class="mt-2">
-                    <button wire:click="edit({{ $article->id }})"
-                            class="text-blue-600 text-sm hover:underline">Editar</button>
+                <small class="text-gray-600">Por: {{ $article->user->name ?? 'Desconocido' }}</small>
 
-                    @if (auth()->user()->id === $article->user_id || auth()->user()->hasRole('admin'))
+                <div class="mt-2 flex space-x-3">
+                    @if (auth()->id() === $article->user_id || auth()->user()->hasRole('admin'))
+                        <button wire:click="edit({{ $article->id }})"
+                                class="text-blue-600 text-sm hover:underline">
+                            Editar
+                        </button>
+
                         <button wire:click="deleteArticle({{ $article->id }})"
                                 class="text-red-600 text-sm hover:underline">
                             Borrar

@@ -20,18 +20,45 @@
         @endforeach
     </div>
 
-    @foreach ($comments as $comment)
-        <div class="p-2 border rounded">
-            <strong>{{ $comment->user->name }}</strong>
-            <p>{{ $comment->content }}</p>
-            <small class="text-gray-500">{{ $comment->created_at->diffForHumans() }}</small>
+    @foreach($comments as $comment)
+        <div class="border p-3 mb-3 rounded bg-gray-100">
+            <p class="text-sm text-gray-800">
+                <strong>{{ $comment->user->name ?? 'Anónimo' }}</strong>:
+            </p>
 
-            @if ($comment->user_id === auth()->id())
-                <button wire:click="borraComment({{ $comment->id }})"
-                        class="text-red-600 text-sm mt-1">Borrar</button>
+            @if($editingId === $comment->id)
+                <textarea wire:model="editContent" class="w-full p-2 border rounded mb-2"></textarea>
+                <div class="flex gap-2">
+                    <button wire:click="updateComment"
+                            class="bg-blue-600 text-white px-2 py-1 text-sm rounded">
+                        Guardar
+                    </button>
+                    <button wire:click="$set('editingId', null)"
+                            class="bg-gray-400 text-white px-2 py-1 text-sm rounded">
+                        Cancelar
+                    </button>
+                </div>
+            @else
+                <p class="mb-1">{{ $comment->content }}</p>
+
+                @if(auth()->id() === $comment->user_id || auth()->user()->hasRole('admin'))
+                    <div class="text-sm text-right">
+                        <button wire:click="startEdit({{ $comment->id }})"
+                                class="text-blue-600 hover:underline mr-2">
+                            Editar
+                        </button>
+
+                        <button wire:click="deleteComment({{ $comment->id }})"
+                                onclick="return confirm('¿Borrar este comentario?')"
+                                class="text-red-600 hover:underline">
+                            Borrar
+                        </button>
+                    </div>
+                @endif
             @endif
         </div>
     @endforeach
+
 
 </div>
 

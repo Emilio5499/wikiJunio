@@ -15,12 +15,12 @@ class PublicArticleController extends Controller
         $busqueda = $request->input('search');
         $orden = $request->input('orden', 'recientes');
 
-        $articulos = Article::query()
-            ->when($orden === 'titulo_asc', fn($q) => $q->orderBy('title', 'asc'))
+        $articulos = Article::withCount('comentarios')
+        ->when($orden === 'titulo_asc', fn($q) => $q->orderBy('title', 'asc'))
             ->when($orden === 'titulo_desc', fn($q) => $q->orderBy('title', 'desc'))
             ->when($orden === 'recientes', fn($q) => $q->orderByDesc('created_at'))
             ->when($categoriaId, fn($q) => $q->porCategoria($categoriaId))
-            ->when($minComentarios, fn($q) => $q->muchosComentarios($minComentarios))
+            ->when($minComentarios, fn($q) => $q->having('comentarios_count', '>=', $minComentarios)) // 👈 usar having
             ->when($busqueda, function ($q) use ($busqueda) {
                 $q->where(function ($query) use ($busqueda) {
                     $query->where('title', 'like', "%{$busqueda}%")
@@ -32,6 +32,7 @@ class PublicArticleController extends Controller
 
         return view('wiki.index', compact('articulos', 'categoriaId', 'minComentarios', 'busqueda', 'orden'));
     }
+
 
 
     public function show(Article $article)

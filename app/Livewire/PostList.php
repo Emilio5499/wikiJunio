@@ -11,3 +11,4 @@ class PostList extends Component
         return view('livewire.post-list');
     }
 }
+

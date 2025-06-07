@@ -6,6 +6,7 @@ use App\Models\Article;
 use App\Models\Category;
 use App\Models\Tag;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 
 class ArticleCrud extends Component
@@ -46,7 +47,12 @@ class ArticleCrud extends Component
             ]);
         }
 
-        session()->flash('success', 'Artículo creado correctamente.');
+        Mail::raw("Se ha creado un post: {$article->title}", function ($message) {
+            $message->to('admin@example.com')
+                ->subject('Nuevo post');
+        });
+
+        session()->flash('success', 'Post creado');
         $this->resetForm();
         $this->articles = Auth::user()->articles()->with('tags')->latest()->get();
     }

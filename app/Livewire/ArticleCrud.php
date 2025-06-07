@@ -24,7 +24,7 @@ class ArticleCrud extends Component
     {
         $this->categories = Category::all();
         $this->availableTags = Tag::all();
-        $this->articles = Auth::user()?->articles()->with('tags')->latest()->get() ?? collect();
+        $this->loadArticles();
     }
 
 
@@ -56,6 +56,8 @@ class ArticleCrud extends Component
         session()->flash('success', 'Post creado');
         $this->resetForm();
         $this->loadArticles();
+
+        $this->loadArticles();
     }
 
     public function edit($id)
@@ -71,11 +73,9 @@ class ArticleCrud extends Component
         $this->title = $article->title;
         $this->content = $article->content;
         $this->category_id = $article->category_id;
-        $this->tags = $article->tags->pluck('id')->toArray();
+        $this->tags = $article->tags->pluck('id')->map(fn ($id) => (string)$id)->toArray();
         $this->usage_types = $article->tags->pluck('pivot.usage_type', 'id')->toArray();
     }
-
-
 
     public function update()
     {
@@ -104,9 +104,8 @@ class ArticleCrud extends Component
 
         $article->tags()->sync($syncData);
 
-        session()->flash('success', 'Post actualizado.');
-        $this->resetForm();
         $this->loadArticles();
+        $this->resetForm();
     }
 
     public function deleteArticle($id)
@@ -137,8 +136,8 @@ class ArticleCrud extends Component
         $this->content = '';
         $this->category_id = '';
         $this->tags = [];
-        $this->usage_types = [];
         $this->article_id = null;
+        $this->loadArticles();
     }
 
     public function render()

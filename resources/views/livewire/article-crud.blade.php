@@ -22,32 +22,30 @@
     <form wire:submit.prevent="{{ $editing ? 'update' : 'create' }}" class="space-y-4 bg-white p-6 rounded shadow">
         <x-input label="Título" name="title" id="title" wire:model.defer="title" />
 
-        <x-textarea label="Contenido" name="content" id="content" wire:model.defer="content" />
+        {{-- TEXTAREA con wire:model.defer --}}
+        <div>
+            <label for="content" class="block text-sm font-medium text-gray-700">Contenido</label>
+            <textarea id="content" name="content" wire:model.defer="content"
+                      rows="6"
+                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+            </textarea>
+        </div>
 
         <x-select label="Categoría" name="category_id" id="category_id" wire:model="category_id">
-            <option value="">Elegir categoria</option>
+            <option value="">Elegir categoría</option>
             @foreach ($categories as $category)
                 <option value="{{ $category->id }}">{{ $category->name }}</option>
             @endforeach
         </x-select>
 
+        {{-- TAGS: solo checkboxes, sin desplegables --}}
         @if ($availableTags->count())
             <div>
                 <label class="block font-semibold mb-2">Tags</label>
-
                 @foreach ($availableTags as $tag)
-                    <div class="flex items-center space-x-4 mb-2">
+                    <div class="flex items-center space-x-2 mb-1">
                         <input type="checkbox" wire:model="tags" value="{{ $tag->id }}" id="tag-{{ $tag->id }}">
                         <label for="tag-{{ $tag->id }}">{{ $tag->name }}</label>
-
-                        @if (collect($tags)->contains((string) $tag->id))
-                            <select wire:model="usage_types.{{ $tag->id }}" class="border rounded p-1 text-sm">
-                                <option value="">Tipo de uso</option>
-                                <option value="post nuevo">Post nuevo</option>
-                                <option value="debate">Debate</option>
-                                <option value="spoiler">Spoiler</option>
-                            </select>
-                        @endif
                     </div>
                 @endforeach
             </div>

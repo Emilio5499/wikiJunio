@@ -55,12 +55,12 @@ class ArticleCrud extends Component
 
         session()->flash('success', 'Post creado');
         $this->resetForm();
-        $this->articles = Auth::user()->articles()->with('tags')->latest()->get();
+        $this->loadArticles();
     }
 
     public function edit($id)
     {
-        $article = Article::findOrFail($id);
+        $article = Article::with('tags')->findOrFail($id);
 
         if (auth()->id() !== $article->user_id && !auth()->user()->hasRole('admin')) {
             abort(403);
@@ -76,6 +76,7 @@ class ArticleCrud extends Component
     }
 
 
+
     public function update()
     {
         $this->validate([
@@ -84,7 +85,11 @@ class ArticleCrud extends Component
             'category_id' => 'required|exists:categories,id',
         ]);
 
-        $article = Auth::user()->articles()->findOrFail($this->article_id);
+        $article = Article::findOrFail($this->article_id);
+
+        if (auth()->id() !== $article->user_id && !auth()->user()->hasRole('admin')) {
+            abort(403);
+        }
 
         $article->update([
             'title' => $this->title,
@@ -96,11 +101,12 @@ class ArticleCrud extends Component
         foreach ($this->tags as $tagId) {
             $syncData[$tagId] = ['usage_type' => $this->usage_types[$tagId] ?? 'post nuevo'];
         }
+
         $article->tags()->sync($syncData);
 
         session()->flash('success', 'Post actualizado.');
         $this->resetForm();
-        $this->articles = Auth::user()->articles()->with('tags')->latest()->get();
+        $this->loadArticles();
     }
 
     public function deleteArticle($id)

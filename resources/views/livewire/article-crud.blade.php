@@ -22,6 +22,7 @@
     <form wire:submit.prevent="{{ $editing ? 'update' : 'create' }}" class="space-y-4 bg-white p-6 rounded shadow">
         <x-input label="Título" name="title" id="title" wire:model.defer="title" />
 
+        {{-- TEXTAREA corregido --}}
         <x-textarea label="Contenido" name="content" id="content" wire:model.defer="content" />
 
         <x-select label="Categoría" name="category_id" id="category_id" wire:model="category_id">
@@ -31,8 +32,9 @@
             @endforeach
         </x-select>
 
-        <div>
-            @if ($availableTags->count())
+        {{-- Tags --}}
+        @if ($availableTags->count())
+            <div>
                 <label class="block font-semibold mb-2">Tags</label>
 
                 @foreach ($availableTags as $tag)
@@ -41,8 +43,7 @@
                         <label for="tag-{{ $tag->id }}">{{ $tag->name }}</label>
 
                         @if (collect($tags)->contains((string) $tag->id))
-                            <select wire:model="usage_types.{{ $tag->id }}"
-                                    class="border rounded p-1 text-sm">
+                            <select wire:model="usage_types.{{ $tag->id }}" class="border rounded p-1 text-sm">
                                 <option value="">Tipo de uso</option>
                                 <option value="post nuevo">Post nuevo</option>
                                 <option value="debate">Debate</option>
@@ -51,12 +52,11 @@
                         @endif
                     </div>
                 @endforeach
-            @endif
-        </div>
+            </div>
+        @endif
 
         <div class="flex space-x-4">
-            <button type="submit"
-                    class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
                 {{ $editing ? 'Actualizar post' : 'Crear post' }}
             </button>
 
@@ -87,7 +87,7 @@
                             Editar
                         </button>
                         <button wire:click="deleteArticle({{ $article->id }})"
-                                onclick="return confirm('¿borrar este post?')"
+                                onclick="return confirm('¿Borrar este post?')"
                                 class="text-red-600 text-sm hover:underline">
                             Borrar
                         </button>

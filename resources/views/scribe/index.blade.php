@@ -55,18 +55,24 @@
             @auth
                 @if (auth()->id() === $article->user_id || auth()->user()->hasRole('admin'))
                     <div class="absolute top-2 right-2 flex space-x-2">
-                        <a href="{{ route('articles.create') }}?edit={{ $article->id }}"
-                           class="text-blue-600 text-sm hover:underline">Editar</a>
+                        <button
+                            wire:click="$emit('edit', {{ $article->id }})"
+                            class="text-blue-600 text-sm hover:underline"
+                        >
+                            Editar
+                        </button>
 
-                        <form method="POST" action="{{ route('articles.destroy', $article->id) }}"
-                              onsubmit="return confirm('¿Borrar el post?')">
-                            @csrf
-                            @method('DELETE')
-                            <button class="text-red-600 text-sm hover:underline">Borrar</button>
-                        </form>
+                        <button
+                            wire:click="$emit('deleteArticle', {{ $article->id }})"
+                            onclick="return confirm('¿Borrar post?')"
+                            class="text-red-600 text-sm hover:underline"
+                        >
+                            Borrar
+                        </button>
                     </div>
                 @endif
             @endauth
+
 
             <h2 class="text-xl font-semibold mb-1">
                 <a href="{{ route('wiki.show', $article) }}">{{ $article->title }}</a>

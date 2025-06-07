@@ -1,16 +1,10 @@
-<div class="mb-4">
-    <label for="{{ $id }}" class="block text-sm font-medium text-gray-700 mb-1">
-        {{ $label }}
-    </label>
+@props(['label', 'name'])
 
+<div>
+    <label for="{{ $name }}" class="block text-sm font-medium text-gray-700">{{ $label }}</label>
     <textarea
-        id="{{ $id }}"
+        id="{{ $name }}"
         name="{{ $name }}"
-        rows="{{ $rows }}"
-        {{ $attributes->merge(['class' => 'border rounded w-full p-2']) }}
-    >{{ old($name, $value) }}</textarea>
-
-    @error($name)
-    <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
-    @enderror
+        {{ $attributes->merge(['class' => 'mt-1 block w-full rounded-md border-gray-300 shadow-sm']) }}
+    ></textarea>
 </div>

@@ -24,19 +24,18 @@
 
         <x-textarea label="Contenido" name="content" id="content" wire:model.defer="content" />
 
-        <x-select label="Categoria" name="category_id" id="category_id" wire:model="category_id">
-            <option value="">Categorias</option>
+        <x-select label="Categoría" name="category_id" id="category_id" wire:model="category_id">
+            <option value="">Elegir categoria</option>
             @foreach ($categories as $category)
                 <option value="{{ $category->id }}">{{ $category->name }}</option>
             @endforeach
         </x-select>
 
         <div>
-
             @if ($availableTags->count())
                 <label class="block font-semibold mb-2">Tags</label>
 
-            @foreach ($availableTags as $tag)
+                @foreach ($availableTags as $tag)
                     <div class="flex items-center space-x-4 mb-2">
                         <input type="checkbox" wire:model="tags" value="{{ $tag->id }}" id="tag-{{ $tag->id }}">
                         <label for="tag-{{ $tag->id }}">{{ $tag->name }}</label>
@@ -44,6 +43,7 @@
                         @if (collect($tags)->contains((string) $tag->id))
                             <select wire:model="usage_types.{{ $tag->id }}"
                                     class="border rounded p-1 text-sm">
+                                <option value="">Tipo de uso</option>
                                 <option value="post nuevo">Post nuevo</option>
                                 <option value="debate">Debate</option>
                                 <option value="spoiler">Spoiler</option>
@@ -51,9 +51,7 @@
                         @endif
                     </div>
                 @endforeach
-            @else
             @endif
-
         </div>
 
         <div class="flex space-x-4">
@@ -77,21 +75,24 @@
         <h2 class="text-xl font-semibold mb-2">Tus posts</h2>
 
         @forelse($articles as $article)
-            <div class="border p-4 mb-3 rounded bg-gray-50">
+            <div class="border p-4 mb-3 rounded bg-gray-50 relative">
                 <h3 class="font-bold text-lg">{{ $article->title }}</h3>
                 <p class="text-sm text-gray-700 mb-1">{{ Str::limit($article->content, 120) }}</p>
-                <small class="text-gray-600">Por: {{ $article->user->name }}</small>
-                <div class="mt-2">
-                    <button wire:click="edit({{ $article->id }})"
-                            class="text-blue-600 text-sm hover:underline">Editar</button>
+                <small class="text-gray-600">Por: {{ $article->user->name ?? 'Desconocido' }}</small>
 
-                    @if (auth()->user()->id === $article->user_id || auth()->user()->hasRole('admin'))
+                @if (auth()->id() === $article->user_id || auth()->user()->hasRole('admin'))
+                    <div class="absolute top-2 right-2 flex space-x-2">
+                        <button wire:click="edit({{ $article->id }})"
+                                class="text-blue-600 text-sm hover:underline">
+                            Editar
+                        </button>
                         <button wire:click="deleteArticle({{ $article->id }})"
+                                onclick="return confirm('¿borrar este post?')"
                                 class="text-red-600 text-sm hover:underline">
                             Borrar
                         </button>
-                    @endif
-                </div>
+                    </div>
+                @endif
             </div>
         @empty
             <p class="text-gray-600">No hay posts</p>

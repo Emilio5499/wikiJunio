@@ -6,5 +6,5 @@
         id="{{ $name }}"
         name="{{ $name }}"
         {{ $attributes->merge(['class' => 'mt-1 block w-full rounded-md border-gray-300 shadow-sm']) }}
-    ></textarea>
+    >{{ $attributes['wire:model.defer'] ? '' : (old($name) ?? '') }}</textarea>
 </div>

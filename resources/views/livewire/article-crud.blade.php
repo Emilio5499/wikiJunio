@@ -22,7 +22,6 @@
     <form wire:submit.prevent="{{ $editing ? 'update' : 'create' }}" class="space-y-4 bg-white p-6 rounded shadow">
         <x-input label="Título" name="title" id="title" wire:model.defer="title" />
 
-        {{-- TEXTAREA corregido --}}
         <x-textarea label="Contenido" name="content" id="content" wire:model.defer="content" />
 
         <x-select label="Categoría" name="category_id" id="category_id" wire:model="category_id">
@@ -32,7 +31,6 @@
             @endforeach
         </x-select>
 
-        {{-- Tags --}}
         @if ($availableTags->count())
             <div>
                 <label class="block font-semibold mb-2">Tags</label>

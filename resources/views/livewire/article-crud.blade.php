@@ -72,7 +72,7 @@
     <hr class="my-6">
 
     <div>
-        <h2 class="text-xl font-semibold mb-2">Tus posts</h2>
+        <h2 class="text-xl font-semibold mb-2">Posts</h2>
 
         @forelse($articles as $article)
             <div class="border p-4 mb-3 rounded bg-gray-50 relative">

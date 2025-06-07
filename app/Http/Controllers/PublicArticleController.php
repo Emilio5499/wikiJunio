@@ -33,7 +33,32 @@ class PublicArticleController extends Controller
         return view('wiki.index', compact('articulos', 'categoriaId', 'minComentarios', 'busqueda', 'orden'));
     }
 
+    public function edit(Article $article)
+    {
+        return view('articles.edit', compact('article'));
+    }
 
+    public function update(Request $request, Article $article)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
+            'tags' => 'array',
+        ]);
+
+        $article->update([
+            'title' => $validated['title'],
+            'content' => $validated['content'],
+            'category_id' => $validated['category_id'],
+        ]);
+
+        if (isset($validated['tags'])) {
+            $article->tags()->sync($validated['tags']);
+        }
+
+        return redirect()->route('wiki.index')->with('success', 'Post actualizado');
+    }
 
     public function show(Article $article)
     {

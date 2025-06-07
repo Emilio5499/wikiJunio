@@ -27,7 +27,6 @@ class ArticleCrud extends Component
         $this->loadArticles();
     }
 
-
     public function create()
     {
         $this->validate([
@@ -49,14 +48,11 @@ class ArticleCrud extends Component
         }
 
         Mail::raw("Se ha creado un post: {$article->title}", function ($message) {
-            $message->to('admin@example.com')
-                ->subject('Nuevo post');
+            $message->to('admin@example.com')->subject('Nuevo post');
         });
 
-        session()->flash('success', 'Post creado');
+        session()->flash('success', 'Post creado.');
         $this->resetForm();
-        $this->loadArticles();
-
         $this->loadArticles();
     }
 
@@ -73,9 +69,9 @@ class ArticleCrud extends Component
         $this->title = $article->title;
         $this->content = $article->content;
         $this->category_id = $article->category_id;
-        $this->tags = $article->tags->pluck('id')->map(fn ($id) => (string)$id)->toArray();
-        $this->usage_types = $article->tags->pluck('pivot.usage_type', 'id')->toArray();
+        $this->tags = $article->tags->pluck('id')->map(fn($id) => (string) $id)->toArray();
     }
+
 
     public function update()
     {
@@ -104,8 +100,9 @@ class ArticleCrud extends Component
 
         $article->tags()->sync($syncData);
 
-        $this->loadArticles();
+        session()->flash('success', 'Post actualizado.');
         $this->resetForm();
+        $this->loadArticles();
     }
 
     public function deleteArticle($id)
@@ -117,7 +114,7 @@ class ArticleCrud extends Component
         }
 
         $article->delete();
-        session()->flash('success', 'Post borrado');
+        session()->flash('success', 'Post borrado.');
 
         $this->loadArticles();
     }
@@ -137,7 +134,6 @@ class ArticleCrud extends Component
         $this->category_id = '';
         $this->tags = [];
         $this->article_id = null;
-        $this->loadArticles();
     }
 
     public function render()
@@ -145,4 +141,3 @@ class ArticleCrud extends Component
         return view('livewire.article-crud');
     }
 }
-

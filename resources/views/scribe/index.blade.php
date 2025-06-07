@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1 class="text-3xl font-bold mb-6">Posts publicos</h1>
+    <h1 class="text-3xl font-bold mb-6">Posts públicos</h1>
 
     @auth
         <div class="flex justify-between items-center mb-6">
@@ -51,28 +51,21 @@
 
     @forelse ($articulos as $article)
         <div class="relative mb-6 p-4 bg-white shadow rounded">
-
             @auth
                 @if (auth()->id() === $article->user_id || auth()->user()->hasRole('admin'))
                     <div class="absolute top-2 right-2 flex space-x-2">
-                        <button
-                            wire:click="$emit('edit', {{ $article->id }})"
-                            class="text-blue-600 text-sm hover:underline"
-                        >
-                            Editar
-                        </button>
+                        <a href="{{ route('articles.edit', $article) }}"
+                           class="text-blue-600 text-sm hover:underline">Editar</a>
 
-                        <button
-                            wire:click="$emit('deleteArticle', {{ $article->id }})"
-                            onclick="return confirm('¿Borrar post?')"
-                            class="text-red-600 text-sm hover:underline"
-                        >
-                            Borrar
-                        </button>
+                        <form method="POST" action="{{ route('articles.destroy', $article) }}"
+                              onsubmit="return confirm('¿Borrar post?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-red-600 text-sm hover:underline">Borrar</button>
+                        </form>
                     </div>
                 @endif
             @endauth
-
 
             <h2 class="text-xl font-semibold mb-1">
                 <a href="{{ route('wiki.show', $article) }}">{{ $article->title }}</a>
@@ -93,10 +86,8 @@
             @endif
         </div>
     @empty
-        <p class="text-gray-600">No hay posts publicos</p>
+        <p class="text-gray-600">No hay posts</p>
     @endforelse
 
     {{ $articulos->links() }}
 @endsection
-
-@livewire('article-crud')

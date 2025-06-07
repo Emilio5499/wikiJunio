@@ -9,6 +9,10 @@ use App\Http\Controllers\{
 };
 use App\Livewire\ArticleCrud;
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/articles/{article}/edit', [PublicArticleController::class, 'edit'])->name('articles.edit');
+    Route::put('/articles/{article}', [PublicArticleController::class, 'update'])->name('articles.update');
+});
 Route::get('/articles/create', function () {
     return view('articles.create');
 })->name('articles.create');

@@ -26,13 +26,13 @@ it('cannot duplicate tags for the same article', function () {
 
     try {
         $article->tags()->attach($tag->id, ['usage_type' => 'spoiler']);
-        $this->fail('Se permitió duplicar el tag en la tabla pivote');
+        $this->fail('Se puede duplicar tag en la tabla pivote');
     } catch (\Illuminate\Database\QueryException $e) {
         $this->assertTrue(true);
     }
 });
 
-it('shows tags on the post public page', function () {
+it('shows post tags public page', function () {
     $article = Article::factory()->create();
     $tag = Tag::factory()->create(['name' => 'Laravel']);
 
@@ -42,7 +42,7 @@ it('shows tags on the post public page', function () {
         ->assertSee('Laravel');
 });
 
-it('can create a post with tags and usage_type from Livewire', function () {
+it('can create post with tags from Livewire', function () {
     $user = User::factory()->create();
     $category = \App\Models\Category::factory()->create();
     $tag = Tag::factory()->create();

@@ -1,10 +1,13 @@
 <?php
 
+use App\Jobs\ImportFakeArticles;
 use App\Mail\ColaboradorNotificacion;
 use App\Models\Article;
 use App\Models\Comentario;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
@@ -52,21 +55,35 @@ it('sends mail to post collaborators', function () {
     Mail::assertQueued(ColaboradorNotificacion::class);
 });
 
-it('ejecuta el comando AsignarColaboradores sin errores', function () {
+it('uses command AsignarColaboradores without error', function () {
     $this->artisan('articles:asignar-colaboradores')
         ->assertExitCode(0);
 });
 
-it('asigna colaboradores a artículos', function () {
-    $articles = Article::factory()->count(3)->create();
-    $users = User::factory()->count(5)->create();
+it('dispatch job with correct number of posts', function () {
+    Bus::fake();
 
-    for ($i = 0; $i < 10; $i++) {
-        $this->artisan('articles:asignar-colaboradores');
-    }
+    Artisan::call('import:fake-articles 7');
 
-    foreach ($articles as $article) {
-        $article->refresh();
-        expect($article->collaborators()->count())->toBeGreaterThanOrEqual(1);
-    }
+    Bus::assertDispatched(ImportFakeArticles::class, function ($job) {
+        return $job->count === 7;
+    });
 });
+
+it('shows message in console', function () {
+    Artisan::call('import:fake-articles 5');
+
+    $output = Artisan::output();
+    expect($output)->toContain('Creados 5 posts.');
+});
+
+it('creates 10 posts if no other instruction is given', function () {
+    Bus::fake();
+
+    Artisan::call('import:fake-articles');
+
+    Bus::assertDispatched(ImportFakeArticles::class, function ($job) {
+        return $job->count === 10;
+    });
+});
+

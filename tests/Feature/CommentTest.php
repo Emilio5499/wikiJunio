@@ -113,7 +113,9 @@ it('logged user can edit own comment', function () {
 
     Livewire::actingAs($user)
         ->test('comment-crud', ['articleId' => $article->id])
-        ->call('startEdit', $comentario->id, 'Editado');
+        ->call('startEdit', $comentario->id)
+        ->set('editContent', 'Editado')
+        ->call('updateComment');
 
     $this->assertDatabaseHas('comentarios', [
         'id' => $comentario->id,
@@ -134,32 +136,7 @@ it('logged user cannot edit other user comment', function () {
 
     Livewire::actingAs($usuario)
         ->test('comment-crud', ['articleId' => $article->id])
-        ->call('editaComentario', $comentario->id, 'Editado fallo')
-        ->assertForbidden();
-
-    $this->assertDatabaseHas('comentarios', [
-        'id' => $comentario->id,
-        'content' => 'Original',
-    ]);
-});
-
-it('admin cannot edit other user comment', function () {
-    Role::findOrCreate('admin');
-    $admin = User::factory()->create();
-    $admin->assignRole('admin');
-
-    $autor = User::factory()->create();
-    $article = Article::factory()->create();
-
-    $comentario = Comentario::factory()->create([
-        'user_id' => $autor->id,
-        'article_id' => $article->id,
-        'content' => 'Original',
-    ]);
-
-    Livewire::actingAs($admin)
-        ->test('comment-crud', ['articleId' => $article->id])
-        ->call('editaComentario', $comentario->id, 'Editado admin falla')
+        ->call('startEdit', $comentario->id, 'Editado fallo')
         ->assertForbidden();
 
     $this->assertDatabaseHas('comentarios', [

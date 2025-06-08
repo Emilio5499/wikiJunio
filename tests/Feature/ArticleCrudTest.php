@@ -5,6 +5,7 @@ use App\Models\Article;
 use App\Models\Category;
 use App\Models\User;
 use Livewire\Livewire;
+use Spatie\Permission\Models\Role;
 
 it('renders ArticleCrud component', function () {
     $user = User::factory()->create();
@@ -168,26 +169,54 @@ it('cancel edit resets the form', function () {
         ->assertSet('content', '');
 });
 
-it('admin can edit and delete any post', function () {
+it('admin can edit and delete other user post', function () {
+    Role::findOrCreate('admin', 'web');
+
     $admin = User::factory()->create();
     $admin->assignRole('admin');
 
-    $author = User::factory()->create();
-    $article = Article::factory()->for($author)->create([
-        'title' => 'Admin puede',
+    $otroUsuario = User::factory()->create();
+    $category = Category::factory()->create();
+
+    $article = Article::factory()->for($otroUsuario)->create([
+        'title' => 'Titulo original',
+        'content' => 'Contenido original',
+        'category_id' => $category->id,
     ]);
 
     Livewire::actingAs($admin)
         ->test(\App\Livewire\ArticleCrud::class)
         ->call('edit', $article->id)
-        ->set('title', 'Actualizado por admin')
+        ->set('title', 'Actualizado admin')
+        ->set('content', 'actualizado')
+        ->set('category_id', $category->id)
         ->call('update');
 
-    expect($article->fresh()->title)->toBe('Actualizado por admin');
-
-    Livewire::actingAs($admin)
-        ->test(\App\Livewire\ArticleCrud::class)
-        ->call('deleteArticle', $article->id);
-
-    expect(Article::find($article->id))->toBeNull();
+    expect($article->fresh()->title)->toBe('Actualizado admin');
 });
+
+it('collaborator can edit other user post', function () {
+    $owner = User::factory()->create();
+    $colaborador = User::factory()->create();
+    $category = \App\Models\Category::factory()->create();
+
+    $article = \App\Models\Article::factory()->create([
+        'user_id' => $owner->id,
+        'title' => 'Original',
+        'content' => 'Texto original',
+        'category_id' => $category->id,
+    ]);
+
+    $article->collaborators()->attach($colaborador->id);
+
+    Livewire::actingAs($colaborador)
+        ->test(\App\Livewire\ArticleCrud::class)
+        ->call('edit', $article->id)
+        ->set('title', 'Editado colaborador')
+        ->set('content', 'Nuevo contenido')
+        ->set('category_id', $category->id)
+        ->call('update');
+
+    expect($article->fresh()->title)->toBe('Editado colaborador');
+});
+

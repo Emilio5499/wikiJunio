@@ -3,36 +3,56 @@
 namespace App\Livewire;
 
 use App\Models\Category;
-use App\Models\Tag;
 use Livewire\Component;
 
 class CategoryCrud extends Component
 {
-    public $name, $editingId;
+    public $name = '';
+    public $editingId = null;
 
+    /**
+     * Guarda o actualiza una categoría.
+     */
     public function save()
     {
-        $this->validate(['name' => 'required|string|max:255']);
+        $this->validate([
+            'name' => 'required|string|max:255',
+        ]);
 
-        Category::updateOrCreate(['id' => $this->editingId], ['name' => $this->name]);
+        Category::updateOrCreate(
+            ['id' => $this->editingId],
+            ['name' => $this->name]
+        );
+
+        session()->flash('success', $this->editingId ? 'Categoría actualizada.' : 'Categoría creada.');
 
         $this->reset(['name', 'editingId']);
     }
 
+    /**
+     * Prepara el formulario para editar una categoría existente.
+     */
     public function edit($id)
     {
-        $Category = Category::findOrFail($id);
-        $this->name = $Category->name;
-        $this->editingId = $Category->id;
+        $category = Category::findOrFail($id);
+
+        $this->name = $category->name;
+        $this->editingId = $category->id;
     }
 
+    /**
+     * Elimina una categoría.
+     */
     public function delete($id)
     {
-        Tag::findOrFail($id)->delete();
-    }
+        Category::findOrFail($id)->delete();
 
+        session()->flash('success', 'Categoría eliminada.');
+    }
     public function render()
     {
-        return view('livewire.tag-crud', ['category' => Tag::all()]);
+        return view('livewire.category-crud', [
+            'categories' => Category::latest()->get(),
+        ]);
     }
 }

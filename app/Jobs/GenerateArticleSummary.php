@@ -2,8 +2,6 @@
 
 namespace App\Jobs;
 
-namespace App\Jobs;
-
 use App\Models\Article;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -16,14 +14,14 @@ class GenerateArticleSummary implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $article;
+    public Article $article;
 
     public function __construct(Article $article)
     {
         $this->article = $article;
     }
 
-    public function handle()
+    public function handle(): void
     {
         $summary = substr(strip_tags($this->article->content), 0, 100);
         Log::info("Resumen generado: {$summary}");

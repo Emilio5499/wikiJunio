@@ -14,7 +14,7 @@ class AsignarColaboradores extends Command
      *
      * @var string
      */
-    protected $signature = 'app:asignar-colaboradores';
+    protected $signature = 'articles:asignar-colaboradores';
 
     /**
      * The console command description.

@@ -20,7 +20,7 @@ it('generates a PDF of the posts', function () {
     Storage::disk('local')->assertExists('pdfs');
 });
 
-it('elimina comentarios vacíos antiguos', function () {
+it('deletes old empty comments', function () {
     $user = User::factory()->create();
     $article = Article::factory()->create();
 
@@ -50,4 +50,23 @@ it('sends mail to post collaborators', function () {
         ->assertExitCode(0);
 
     Mail::assertQueued(ColaboradorNotificacion::class);
+});
+
+it('ejecuta el comando AsignarColaboradores sin errores', function () {
+    $this->artisan('articles:asignar-colaboradores')
+        ->assertExitCode(0);
+});
+
+it('asigna colaboradores a artículos', function () {
+    $articles = Article::factory()->count(3)->create();
+    $users = User::factory()->count(5)->create();
+
+    for ($i = 0; $i < 10; $i++) {
+        $this->artisan('articles:asignar-colaboradores');
+    }
+
+    foreach ($articles as $article) {
+        $article->refresh();
+        expect($article->collaborators()->count())->toBeGreaterThanOrEqual(1);
+    }
 });

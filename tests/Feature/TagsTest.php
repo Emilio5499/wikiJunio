@@ -63,3 +63,37 @@ it('can create post with tags from Livewire', function () {
     expect($article->tags()->first()->pivot->usage_type)->toBe('spoiler');
 });
 
+it('tag can be in multiple posts', function () {
+    $tag = Tag::factory()->create();
+    $articles = Article::factory()->count(2)->create();
+
+    $tag->articles()->attach($articles->pluck('id'));
+
+    expect($tag->articles)->toHaveCount(2);
+});
+
+it('can assign a tag with usage type', function () {
+    $tag = Tag::factory()->create();
+    $article = Article::factory()->create();
+
+    $article->tags()->attach($tag->id, ['usage_type' => 'spoiler']);
+
+    $this->assertDatabaseHas('article_tag', [
+        'article_id' => $article->id,
+        'tag_id' => $tag->id,
+        'usage_type' => 'spoiler',
+    ]);
+});
+
+it('tag can exist without post', function () {
+    $tag = Tag::factory()->create();
+
+    expect($tag->articles)->toHaveCount(0);
+});
+
+it('can create a tag', function () {
+    $tag = Tag::create(['name' => 'backend']);
+
+    expect($tag->name)->toBe('backend');
+    expect($tag->exists)->toBeTrue();
+});

@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-it('envía un correo al colaborador cuando se dispara ColaboradorNuevo', function () {
+it('sends mail to collaborator when ColaboradorNuevo activates', function () {
     Mail::fake();
 
     $user = User::factory()->create();
@@ -24,7 +24,7 @@ it('envía un correo al colaborador cuando se dispara ColaboradorNuevo', functio
     });
 });
 
-it('escribe en el log cuando se crea un artículo', function () {
+it('writes in log when a new post is created', function () {
     Log::shouldReceive('info')
         ->once()
         ->withArgs(fn ($message) => str_contains($message, 'Artículo creado:'));

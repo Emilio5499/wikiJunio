@@ -6,32 +6,56 @@ use Livewire\Component;
 
 class TagCrud extends Component
 {
-    public $name, $editingId;
+    public $name;
+    public $editingId = null;
 
-    public function save()
+    public function create()
     {
         $this->validate(['name' => 'required|string|max:255']);
 
-        Tag::updateOrCreate(['id' => $this->editingId], ['name' => $this->name]);
+        Tag::create(['name' => $this->name]);
 
-        $this->reset(['name', 'editingId']);
+        session()->flash('success', 'Tag creado.');
+        $this->resetForm();
     }
 
     public function edit($id)
     {
         $tag = Tag::findOrFail($id);
-        $this->name = $tag->name;
         $this->editingId = $tag->id;
+        $this->name = $tag->name;
+    }
+
+    public function update()
+    {
+        $this->validate(['name' => 'required|string|max:255']);
+
+        $tag = Tag::findOrFail($this->editingId);
+        $tag->update(['name' => $this->name]);
+
+        session()->flash('success', 'Tag actualizado.');
+        $this->resetForm();
     }
 
     public function delete($id)
     {
-        Tag::findOrFail($id)->delete();
+        $tag = Tag::findOrFail($id);
+        $tag->delete();
+
+        session()->flash('success', 'Tag eliminado.');
+    }
+
+    public function resetForm()
+    {
+        $this->name = '';
+        $this->editingId = null;
     }
 
     public function render()
     {
-        return view('livewire.tag-crud', ['tags' => Tag::all()]);
+        return view('livewire.tag-crud', [
+            'tags' => Tag::latest()->get()
+        ]);
     }
 }
 

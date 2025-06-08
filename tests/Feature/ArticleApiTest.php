@@ -2,7 +2,24 @@
 
 use App\Models\Article;
 use App\Models\User;
-use function Pest\Laravel\{actingAs, getJson, putJson, deleteJson};
+use function Pest\Laravel\{actingAs, getJson, postJson, putJson, deleteJson};
+
+it('logged user can create posts', function () {
+    $user = User::factory()->create();
+
+    actingAs($user, 'sanctum');
+
+    $data = [
+        'title' => 'Nuevo post',
+        'content' => 'Texto del post',
+        'category_id' => \App\Models\Category::factory()->create()->id,
+    ];
+
+    $response = postJson('/api/articles', $data);
+
+    $response->assertStatus(201);
+    $response->assertJsonFragment(['title' => 'Nuevo post']);
+});
 
 it('logged user can list posts', function () {
     $user = User::factory()->create();
@@ -90,3 +107,35 @@ it('user cannot delete other user post', function () {
     deleteJson("/api/articles/{$article->id}")
         ->assertStatus(404);
 });
+
+it('cannot update post with invalid data', function () {
+    $user = User::factory()->create();
+    $article = Article::factory()->for($user)->create();
+
+    actingAs($user, 'sanctum');
+
+    $response = putJson("/api/articles/{$article->id}", [
+        'title' => '',
+        'content' => '',
+    ]);
+
+    $response->assertStatus(422);
+    $response->assertJsonValidationErrors(['title', 'content']);
+});
+
+it('cannot view post that does not exist', function () {
+    $user = User::factory()->create();
+    actingAs($user, 'sanctum');
+
+    getJson('/api/articles/999999')->assertStatus(404);
+});
+
+it('guest cannot access article endpoints', function () {
+    $article = Article::factory()->create();
+
+    getJson('/api/articles')->assertStatus(401);
+    getJson("/api/articles/{$article->id}")->assertStatus(401);
+    putJson("/api/articles/{$article->id}", [])->assertStatus(401);
+    deleteJson("/api/articles/{$article->id}")->assertStatus(401);
+});
+

@@ -29,6 +29,13 @@
             @endforeach
         </x-select>
 
+        <x-select label="Colaboradores" name="colaboradores[]" id="colaboradores"
+                  wire:model="colaboradores" multiple>
+            @foreach ($allUsers as $user)
+                <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
+            @endforeach
+        </x-select>
+
         @if ($availableTags->count())
             <div>
                 <label class="block font-semibold mb-2">Tags</label>

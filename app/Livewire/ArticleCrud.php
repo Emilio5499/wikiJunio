@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Tag;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
@@ -12,11 +13,13 @@ use Livewire\Component;
 class ArticleCrud extends Component
 {
     public $title, $content, $category_id, $tags = [], $usage_types = [];
+    public $collaborators = [];
     public $editing = false;
     public $article_id;
     public $categories;
     public $availableTags;
     public $articles;
+    public $allUsers;
 
     protected $listeners = ['edit', 'deleteArticle'];
 
@@ -24,6 +27,7 @@ class ArticleCrud extends Component
     {
         $this->categories = Category::all();
         $this->availableTags = Tag::all();
+        $this->allUsers = User::all();
         $this->loadArticles();
     }
 
@@ -47,6 +51,15 @@ class ArticleCrud extends Component
             ]);
         }
 
+        $article->collaborators()->sync($this->collaborators);
+
+        foreach ($this->collaborators as $userId) {
+            $user = User::find($userId);
+            Mail::raw("Has sido añadido como colaborador en el post: {$article->title}", function ($message) use ($user) {
+                $message->to($user->email)->subject('Asignado como colaborador');
+            });
+        }
+
         Mail::raw("Se ha creado un post: {$article->title}", function ($message) {
             $message->to('admin@example.com')->subject('Nuevo post');
         });
@@ -58,9 +71,13 @@ class ArticleCrud extends Component
 
     public function edit($id)
     {
-        $article = Article::with('tags')->findOrFail($id);
+        $article = Article::with(['tags', 'collaborators'])->findOrFail($id);
 
-        if (auth()->id() !== $article->user_id && !auth()->user()->hasRole('admin')) {
+        if (
+            auth()->id() !== $article->user_id &&
+            !auth()->user()->hasRole('admin') &&
+            !$article->collaborators->contains(auth()->id())
+        ) {
             abort(403);
         }
 
@@ -70,8 +87,9 @@ class ArticleCrud extends Component
         $this->content = $article->content;
         $this->category_id = $article->category_id;
         $this->tags = $article->tags->pluck('id')->map(fn($id) => (string) $id)->toArray();
+        $this->usage_types = $article->tags->pluck('pivot.usage_type', 'id')->toArray();
+        $this->collaborators = $article->collaborators->pluck('id')->toArray();
     }
-
 
     public function update()
     {
@@ -83,7 +101,11 @@ class ArticleCrud extends Component
 
         $article = Article::findOrFail($this->article_id);
 
-        if (auth()->id() !== $article->user_id && !auth()->user()->hasRole('admin')) {
+        if (
+            auth()->id() !== $article->user_id &&
+            !auth()->user()->hasRole('admin') &&
+            !$article->collaborators->contains(auth()->id())
+        ) {
             abort(403);
         }
 
@@ -97,8 +119,9 @@ class ArticleCrud extends Component
         foreach ($this->tags as $tagId) {
             $syncData[$tagId] = ['usage_type' => $this->usage_types[$tagId] ?? 'post nuevo'];
         }
-
         $article->tags()->sync($syncData);
+
+        $article->collaborators()->sync($this->collaborators);
 
         session()->flash('success', 'Post actualizado.');
         $this->resetForm();
@@ -109,13 +132,16 @@ class ArticleCrud extends Component
     {
         $article = Article::findOrFail($id);
 
-        if (auth()->id() !== $article->user_id && !auth()->user()->hasRole('admin')) {
+        if (
+            auth()->id() !== $article->user_id &&
+            !auth()->user()->hasRole('admin') &&
+            !$article->collaborators->contains(auth()->id())
+        ) {
             abort(403);
         }
 
         $article->delete();
         session()->flash('success', 'Post borrado.');
-
         $this->loadArticles();
     }
 
@@ -123,7 +149,16 @@ class ArticleCrud extends Component
     {
         $this->articles = auth()->user()->hasRole('admin')
             ? Article::with('user', 'tags')->latest()->get()
-            : Auth::user()->articles()->with('tags')->latest()->get();
+            : Article::where('user_id', auth()->id())
+                ->orWhereHas('collaborators', fn ($q) => $q->where('user_id', auth()->id()))
+                ->with('user', 'tags')
+                ->latest()
+                ->get();
+    }
+
+    public function collaborators()
+    {
+        return $this->belongsToMany(User::class, 'article_user', 'article_id', 'user_id');
     }
 
     public function resetForm()
@@ -133,6 +168,8 @@ class ArticleCrud extends Component
         $this->content = '';
         $this->category_id = '';
         $this->tags = [];
+        $this->usage_types = [];
+        $this->collaborators = [];
         $this->article_id = null;
     }
 

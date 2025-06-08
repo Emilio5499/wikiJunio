@@ -8,7 +8,7 @@ it('logged user can list posts', function () {
     $user = User::factory()->create();
     $articles = Article::factory()->count(3)->for($user)->create();
 
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     $response = getJson('/api/articles');
 
@@ -21,7 +21,7 @@ it('logged user can see own posts', function () {
     $user = User::factory()->create();
     $article = Article::factory()->for($user)->create();
 
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     $response = getJson("/api/articles/{$article->id}");
 
@@ -36,7 +36,7 @@ it('logged user can update own posts', function () {
     $user = User::factory()->create();
     $article = Article::factory()->for($user)->create();
 
-    actingAs($user);
+    actingAs($user, 'sanctum');
 
     $newData = [
         'title' => 'Titulo actualizado',

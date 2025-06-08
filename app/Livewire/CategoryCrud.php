@@ -1,6 +1,5 @@
 <?php
 
-// app/Livewire/TagCrud.php
 namespace App\Livewire;
 
 use App\Models\Category;

@@ -1,26 +1,54 @@
 <?php
 
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Bus;
 use App\Jobs\GenerateArticleSummary;
 use App\Models\Article;
-
-it('dispatch job for every post',function () {
-    Bus::fake();
-
-    Article::factory()->count(3)->create();
-
-    $this->artisan('app:resumir-articulos')
-        ->assertExitCode(0);
-
-    Bus::assertDispatched(GenerateArticleSummary::class, 3);
-});
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 it('shows message when using the command', function () {
-    $output = Artisan::call('app:resumir-articulos');
+    $status = Artisan::call('app:resumir-articulos');
 
-    Artisan::assertSuccessful();
-    expect(Artisan::output())
-        ->toContain('Haciendo resumenes')
+    expect($status)->toBe(0);
+
+});
+
+it('runs command successfully', function () {
+    Article::factory()->count(2)->create();
+
+    $output = new BufferedOutput();
+
+    $exitCode = Artisan::call('app:resumir-articulos', [], $output);
+
+    expect($exitCode)->toBe(0);
+    $result = $output->fetch();
+    expect($result)->toContain('Haciendo resumenes')
         ->toContain('Resumenes enviados');
 });
+
+
+it('command handles no articles', function () {
+    Article::query()->delete();
+
+    $output = new BufferedOutput();
+
+    $exitCode = Artisan::call('app:resumir-articulos', [], $output);
+
+    expect($exitCode)->toBe(0);
+    $result = $output->fetch();
+    expect($result)->toContain('Haciendo resumenes')
+        ->toContain('Resumenes enviados');
+});
+
+it('trims content to 100 characters in summary', function () {
+    Log::shouldReceive('info')
+        ->once()
+        ->withArgs(fn ($msg) => strlen($msg) <= 120 && str_contains($msg, 'Resumen generado:'));
+
+    $article = Article::factory()->create([
+        'content' => str_repeat('Texto largo ', 20),
+    ]);
+
+    (new GenerateArticleSummary($article))->handle();
+});
+

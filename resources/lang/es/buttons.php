@@ -10,6 +10,7 @@ return [
     'profile' => 'Perfil',
     'delete' => 'Borrar',
     'save' => 'Guardar',
+    'Update name' => 'Actualizar nombre',
     'confirm_delete' => '¿Borrar este post?',
     'update_password' => 'Actualizar contraseña',
 ];

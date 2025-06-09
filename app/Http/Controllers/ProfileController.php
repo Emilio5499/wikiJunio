@@ -16,8 +16,10 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        return view('profile.edit', [
+        return view('profile', [
             'user' => $request->user(),
+            'postsCount' => $request->user()->articles()->count(),
+            'commentsCount' => $request->user()->comments()->count(),
         ]);
     }
 

@@ -87,3 +87,23 @@ it('creates 10 posts if no other instruction is given', function () {
     });
 });
 
+it('assigns a collaborator to an article if not already assigned', function () {
+    $user = User::factory()->create();
+    $article = Article::factory()->create();
+
+    $this->artisan('articles:asignar-colaboradores')
+        ->assertExitCode(0);
+
+    $this->assertDatabaseHas('article_user', [
+        'article_id' => $article->id,
+    ]);
+});
+
+it('shows error if there are no users or articles', function () {
+    \App\Models\User::query()->delete();
+    \App\Models\Article::query()->delete();
+
+    $this->artisan('articles:asignar-colaboradores')
+        ->expectsOutputToContain('No hay usuarios o posts.')
+        ->assertExitCode(0);
+});

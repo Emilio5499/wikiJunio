@@ -1,23 +1,22 @@
 <?php
 return [
-    'create_post' => 'Create Post',
-    'edit_post' => 'Edit Post',
-    'delete_post' => 'Delete Post',
-    'all_posts' => 'All Posts',
-    'comments' => 'Comments',
-    'save' => 'Save',
-    'cancel' => 'Cancel',
-    'title' => 'Title',
-    'content' => 'Content',
-    'category' => 'Category',
-    'tags' => 'Tags',
-    'collaborators' => 'Collaborators',
-    'new_comment' => 'New Comment',
-    'update_post' => 'Update Post',
-    'pdf' => 'Download PDF',
-    'confirm_delete' => 'Are you sure you want to delete this post?',
-    'success_created' => 'Post created successfully.',
-    'success_updated' => 'Post updated successfully.',
-    'success_deleted' => 'Post deleted successfully.',
+    'posts' => [
+        'title' => 'Posts',
+        'create_new' => 'Create New Post',
+        'download_all' => 'Download All',
+        'search_placeholder' => 'Search by title or content',
+        'all_categories' => 'All Categories',
+        'all_comments' => 'All Comments',
+        'or_more' => 'or more',
+        'most_recent' => 'Most Recent',
+        'title_asc' => 'Title A-Z',
+        'title_desc' => 'Title Z-A',
+        'filter' => 'Filter',
+        'by' => 'By',
+        'anonymous' => 'Anonymous',
+        'no_posts' => 'There are no public posts.',
+    ],
 ];
+
+
 

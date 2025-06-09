@@ -1,9 +1,9 @@
 <?php
 
 use App\Models\Article;
+use App\Models\User;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Auth;
+use function Pest\Laravel\{actingAs, get};
 
 it('logged user can download PDF', function () {
     Storage::fake('local');
@@ -35,6 +35,17 @@ it('logged user can download all post in one PDF', function () {
 
     $response->assertStatus(200);
     $response->assertHeader('content-type', 'application/pdf');
+});
+
+it('shows error if no articles exist when downloading all', function () {
+    $user = User::factory()->create();
+
+    actingAs($user);
+
+    $response = get(route('articles.downloadAll'));
+
+    $response->assertRedirect();
+    $response->assertSessionHas('error', 'No hay posts descargables');
 });
 
 it('pdf export has titles', function () {

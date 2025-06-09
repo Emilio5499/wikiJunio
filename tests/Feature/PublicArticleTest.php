@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Article;
+use App\Models\Category;
 use App\Models\Tag;
 use Carbon\Carbon;
 
@@ -53,4 +54,29 @@ it('shows a message when no articles are present', function () {
 
     $response->assertStatus(200);
     $response->assertSee('No hay posts');
+});
+
+it('can filter articles by category', function () {
+    $category1 = Category::factory()->create();
+    $category2 = Category::factory()->create();
+
+    $article1 = Article::factory()->create(['title' => 'Post en Cat 1', 'category_id' => $category1->id]);
+    $article2 = Article::factory()->create(['title' => 'Post en Cat 2', 'category_id' => $category2->id]);
+
+    $response = $this->get('/wiki?categoria=' . $category1->id);
+
+    $response->assertStatus(200);
+    $response->assertSee('Post en Cat 1');
+    $response->assertDontSee('Post en Cat 2');
+});
+
+it('can search articles by title', function () {
+    Article::factory()->create(['title' => 'Artículo especial']);
+    Article::factory()->create(['title' => 'Otro artículo']);
+
+    $response = $this->get('/wiki?search=especial');
+
+    $response->assertStatus(200);
+    $response->assertSee('Artículo especial');
+    $response->assertDontSee('Otro artículo');
 });

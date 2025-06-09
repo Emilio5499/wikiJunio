@@ -11,6 +11,7 @@ return [
     'delete' => 'Borrar',
     'save' => 'Guardar',
     'Update name' => 'Actualizar nombre',
+    'update_button' => 'Actualizar',
     'confirm_delete' => '¿Borrar este post?',
     'update_password' => 'Actualizar contraseña',
 ];

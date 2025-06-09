@@ -1,5 +1,7 @@
 <?php
 return [
+    'welcome' => 'Welcome',
+    'updated' => 'Your profile has been updated.',
     'title' => 'User profile',
     'your_statistics' => 'Your statistics',
     'total_posts' => 'Post total',

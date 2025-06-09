@@ -10,6 +10,7 @@ return [
     'save' => 'Save',
     'profile' => 'Profile',
     'Update name' => 'Update name',
+    'update_button' => 'Update',
     'update_password' => 'Update password',
     'delete' => 'Delete',
     'confirm_delete' => 'Delete post?',

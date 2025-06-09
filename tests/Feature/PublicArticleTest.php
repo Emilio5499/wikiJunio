@@ -53,7 +53,7 @@ it('shows a message when no articles are present', function () {
     $response = $this->get('/wiki');
 
     $response->assertStatus(200);
-    $response->assertSee('No hay posts');
+    $response->assertSee('posts.no_posts');
 });
 
 it('can filter articles by category', function () {

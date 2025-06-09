@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1 class="text-2xl font-bold mb-4">{{ __('posts.title') }}</h1>
+    <h1 class="text-2xl font-bold mb-4">{{ __('titles.posts') }}</h1>
 
     @auth
         <div class="flex justify-between items-center mb-6">
@@ -24,11 +24,11 @@
 
     <form method="GET" class="mb-6 flex flex-wrap gap-3 items-center">
         <input type="text" name="search" value="{{ $busqueda ?? '' }}"
-               placeholder="{{ __('posts.search_placeholder') }}"
+               placeholder="{{ __('forms.search_placeholder') }}"
                class="p-2 border rounded w-48">
 
         <select name="categoria" class="p-2 border rounded">
-            <option value="">{{ __('posts.all_categories') }}</option>
+            <option value="">{{ __('filters.all_categories') }}</option>
             @foreach (\App\Models\Category::all() as $categoria)
                 <option value="{{ $categoria->id }}" {{ (request('categoria') == $categoria->id) ? 'selected' : '' }}>
                     {{ $categoria->name }}
@@ -37,16 +37,16 @@
         </select>
 
         <select name="min" class="p-2 border rounded">
-            <option value="0" {{ request('min') == 0 ? 'selected' : '' }}>{{ __('posts.all_comments') }}</option>
-            <option value="1" {{ request('min') == 1 ? 'selected' : '' }}>1 {{ __('posts.or_more') }}</option>
-            <option value="3" {{ request('min') == 3 ? 'selected' : '' }}>3 {{ __('posts.or_more') }}</option>
-            <option value="5" {{ request('min') == 5 ? 'selected' : '' }}>5 {{ __('posts.or_more') }}</option>
+            <option value="0" {{ request('min') == 0 ? 'selected' : '' }}>{{ __('filters.all_comments') }}</option>
+            <option value="1" {{ request('min') == 1 ? 'selected' : '' }}>1 {{ __('filters.or_more') }}</option>
+            <option value="3" {{ request('min') == 3 ? 'selected' : '' }}>3 {{ __('filters.or_more') }}</option>
+            <option value="5" {{ request('min') == 5 ? 'selected' : '' }}>5 {{ __('filters.or_more') }}</option>
         </select>
 
         <select name="orden" class="p-2 border rounded">
-            <option value="recientes" {{ request('orden') === 'recientes' ? 'selected' : '' }}>{{ __('posts.most_recent') }}</option>
-            <option value="titulo_asc" {{ request('orden') === 'titulo_asc' ? 'selected' : '' }}>{{ __('posts.title_asc') }}</option>
-            <option value="titulo_desc" {{ request('orden') === 'titulo_desc' ? 'selected' : '' }}>{{ __('posts.title_desc') }}</option>
+            <option value="recientes" {{ request('orden') === 'recientes' ? 'selected' : '' }}>{{ __('filters.most_recent') }}</option>
+            <option value="titulo_asc" {{ request('orden') === 'titulo_asc' ? 'selected' : '' }}>{{ __('filters.title_asc') }}</option>
+            <option value="titulo_desc" {{ request('orden') === 'titulo_desc' ? 'selected' : '' }}>{{ __('filters.title_desc') }}</option>
         </select>
 
         <button type="submit"
@@ -61,7 +61,7 @@
                 <a href="{{ route('wiki.show', $article) }}">{{ $article->title }}</a>
             </h2>
             <p class="text-sm text-gray-600 mb-2">
-                {{ __('posts.by') }} {{ $article->user->name ?? __('posts.anonymous') }} - {{ $article->created_at->format('d/m/Y') }}
+                {{ __('forms.by') }} {{ $article->user->name ?? __('posts.anonymous') }} - {{ $article->created_at->format('d/m/Y') }}
             </p>
             <p>{{ Str::limit(strip_tags($article->content), 120) }}</p>
 

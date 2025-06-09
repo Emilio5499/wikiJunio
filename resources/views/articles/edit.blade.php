@@ -2,18 +2,24 @@
 
 @section('content')
     <div class="max-w-4xl mx-auto">
-        <h1 class="text-2xl font-bold mb-4">Editar post</h1>
+        {{-- Selector de idioma --}}
+        <div class="mb-4">
+            <a href="{{ route('lang.switch', 'es') }}" class="px-3 py-1 bg-gray-300 rounded mr-2">ES</a>
+            <a href="{{ route('lang.switch', 'en') }}" class="px-3 py-1 bg-gray-300 rounded">EN</a>
+        </div>
+
+        <h1 class="text-2xl font-bold mb-4">{{ __('edit.title') }}</h1>
 
         <form method="POST" action="{{ route('articles.update', $article) }}">
             @csrf
             @method('PUT')
 
-            <x-input label="Título" name="title" :value="old('title', $article->title)" />
+            <x-input label="{{ __('edit.title_label') }}" name="title" :value="old('title', $article->title)" />
 
-            <x-textarea label="Contenido" name="content">{{ old('content', $article->content) }}</x-textarea>
+            <x-textarea label="{{ __('edit.content_label') }}" name="content">{{ old('content', $article->content) }}</x-textarea>
 
-            <x-select label="Categoría" name="category_id">
-                <option value="">Categoría</option>
+            <x-select label="{{ __('edit.category_label') }}" name="category_id">
+                <option value="">{{ __('edit.select_category') }}</option>
                 @foreach (\App\Models\Category::all() as $cat)
                     <option value="{{ $cat->id }}" {{ old('category_id', $article->category_id) == $cat->id ? 'selected' : '' }}>
                         {{ $cat->name }}
@@ -22,7 +28,7 @@
             </x-select>
 
             <div class="mt-4">
-                <label class="block font-semibold mb-2">Tags</label>
+                <label class="block font-semibold mb-2">{{ __('edit.tags_label') }}</label>
                 @foreach (\App\Models\Tag::all() as $tag)
                     <div class="flex items-center mb-1">
                         <input type="checkbox" name="tags[]" value="{{ $tag->id }}"
@@ -34,9 +40,8 @@
 
             <button type="submit"
                     class="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-                Guardar
+                {{ __('buttons.save') }}
             </button>
         </form>
     </div>
 @endsection
-

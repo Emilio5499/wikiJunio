@@ -1,9 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
 return [
-    'failed'   => 'Estas credenciales no coinciden con nuestros registros.',
-    'password' => 'La contraseña es incorrecta.',
-    'throttle' => 'Demasiados intentos de acceso. Por favor intente nuevamente en :seconds segundos.',
+    'login_title' => 'Iniciar sesión',
+    'email' => 'Correo electrónico',
+    'password' => 'Contraseña',
+    'remember' => 'Recuérdame',
+    'login_button' => 'Entrar',
+    'forgot_password' => '¿Olvidaste tu contraseña?',
 ];
+

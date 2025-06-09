@@ -2,7 +2,6 @@
 
 @section('content')
     <div class="max-w-4xl mx-auto">
-        {{-- Selector de idioma --}}
         <div class="mb-4">
             <a href="{{ route('lang.switch', 'es') }}" class="px-3 py-1 bg-gray-300 rounded mr-2">ES</a>
             <a href="{{ route('lang.switch', 'en') }}" class="px-3 py-1 bg-gray-300 rounded">EN</a>

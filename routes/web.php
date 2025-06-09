@@ -12,12 +12,7 @@ use App\Http\Middleware\SetLocale;
 Route::middleware([SetLocale::class])->group(function () {
 
     Route::get('lang/{locale}', function ($locale) {
-        if (!in_array($locale, ['en', 'es'])) {
-            abort(400);
-        }
-
         session(['locale' => $locale]);
-
         return redirect()->back();
     })->name('lang.switch');
 
@@ -39,7 +34,6 @@ Route::middleware([SetLocale::class])->group(function () {
         ->name('articles.downloadAll');
 
     Route::get('/', [PublicArticleController::class, 'index'])->name('public.articles.index');
-
     Route::get('/articles/{article}', [PublicArticleController::class, 'show'])->name('public.articles.show');
 
     Route::get('/wiki', [PublicArticleController::class, 'index'])->name('wiki.index');
@@ -60,3 +54,4 @@ Route::middleware([SetLocale::class])->group(function () {
 });
 
 require __DIR__.'/auth.php';
+

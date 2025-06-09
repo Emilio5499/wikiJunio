@@ -32,6 +32,11 @@ class ProfileController extends Controller
             $request->user()->email_verified_at = null;
         }
 
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'password' => ['nullable', 'confirmed', 'min:8', 'regex:/[A-Z]/', 'regex:/[a-z]/', 'regex:/[0-9]/'],
+        ]);
+
         $request->user()->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');

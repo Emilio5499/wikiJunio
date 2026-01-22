@@ -18,7 +18,4 @@ Route::middleware('auth:sanctum')->prefix('articles')->group(function () {
     Route::delete('{id}', [ArticleApiController::class, 'destroy']);
 });
 
-Route::middleware('auth:sanctum')->prefix('category')->group(function () {
-    Route::get('/categories', [CategoryApiController::class, 'index']);
-    Route::get('{id}', [CategoryApiController::class, 'show']);
-});
+Route::get('/categories', [CategoryApiController::class, 'index']);

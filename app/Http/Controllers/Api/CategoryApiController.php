@@ -12,4 +12,7 @@ class CategoryApiController extends Controller
     {
         return Category::withCount('articles')->get();
     }
+
+
+
 }

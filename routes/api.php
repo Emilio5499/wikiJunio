@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\ArticleApiController;
 use App\Http\Controllers\Api\CategoryApiController;
+use App\Http\Controllers\Api\UserApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -17,5 +18,7 @@ Route::middleware('auth:sanctum')->prefix('articles')->group(function () {
     Route::put('{id}', [ArticleApiController::class, 'update']);
     Route::delete('{id}', [ArticleApiController::class, 'destroy']);
 });
+
+Route::get('/users', [UserApiController::class, 'index']);
 
 Route::get('/categories', [CategoryApiController::class, 'index']);

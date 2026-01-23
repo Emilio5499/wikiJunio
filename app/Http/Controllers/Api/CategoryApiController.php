@@ -13,6 +13,20 @@ class CategoryApiController extends Controller
         return Category::withCount('articles')->get();
     }
 
+    public function show(){
 
+    }
+
+    public function update(Request $request, $id){
+
+    }
+
+    public function destroy($id){
+
+    }
+
+    public function store(Request $request){
+
+    }
 
 }

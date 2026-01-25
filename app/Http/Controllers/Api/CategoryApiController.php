@@ -27,9 +27,14 @@ class CategoryApiController extends Controller
 
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
+        $category = auth()->article()->category()->findOrFail($id);
+        $category->delete();
 
+        return response()->json(['message' => 'categoria borrada']);
     }
+
 
     public function store(Request $request){
 

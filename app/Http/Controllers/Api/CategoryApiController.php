@@ -23,8 +23,24 @@ class CategoryApiController extends Controller
         return response()->json($category);
     }
 
-    public function update(Request $request, $id){
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
 
+        $category = Category::whereHas('articles', function ($query) {
+            $query->where('user_id', auth()->id());
+        })
+            ->findOrFail($id);
+
+        $category->update([
+            'name' => $validated['name'],
+        ]);
+
+        return response()->json([
+            'category' => $category,
+        ]);
     }
 
     public function destroy($id)

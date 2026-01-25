@@ -23,4 +23,5 @@ Route::get('/users', [UserApiController::class, 'index']);
 
     Route::get('/categories', [CategoryApiController::class, 'index']);
     Route::get('/categories/{id}', [CategoryApiController::class, 'show']);
-
+    Route::put('{id}', [CategoryApiController::class, 'update']);
+    Route::delete('{id}', [CategoryApiController::class, 'destroy']);

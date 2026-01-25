@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Article;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -52,8 +53,17 @@ class CategoryApiController extends Controller
     }
 
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+        ]);
 
+        $article = Category::create($validated);
+
+        return response()->json(
+            201
+        );
     }
 
 }

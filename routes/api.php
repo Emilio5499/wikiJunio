@@ -5,7 +5,6 @@ use App\Http\Controllers\Api\CategoryApiController;
 use App\Http\Controllers\Api\UserApiController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/articles/{id}/pdf', [ArticleApiController::class, 'downloadPdf']);
 
 Route::middleware('auth:sanctum')->prefix('articles')->group(function () {
     Route::get('/', [ArticleApiController::class, 'index']);
@@ -13,6 +12,7 @@ Route::middleware('auth:sanctum')->prefix('articles')->group(function () {
     Route::get('{id}', [ArticleApiController::class, 'show']);
     Route::put('{id}', [ArticleApiController::class, 'update']);
     Route::delete('{id}', [ArticleApiController::class, 'destroy']);
+    Route::get('/articles/{id}/pdf', [ArticleApiController::class, 'downloadPdf']);
 });
 
     Route::get('/users', [UserApiController::class, 'index']);

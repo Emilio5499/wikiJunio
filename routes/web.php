@@ -30,8 +30,6 @@ Route::middleware([SetLocale::class])->group(function () {
     })->name('articles.create');
 
     Route::middleware(['auth'])->group(function () {
-
-        // ⚠️ MUY IMPORTANTE: rutas fijas primero
         Route::get('/articles/downloadAll', [ArticlePdfController::class, 'downloadAll'])
             ->name('articles.downloadAll');
 

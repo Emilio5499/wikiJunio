@@ -9,6 +9,20 @@ use App\Models\Article;
 
 class ArticleApiController extends Controller
 {
+
+    /**
+     * Esta es la api para articulos
+     *
+     * Es una api completa
+     *
+     * Los articulos tienen que tener categorias obligatoriamente, y pueden tener colaboradores
+     *
+     * Con Update tienen que tener los campos llenos, no pueden tener cosas vacias
+     *
+     *
+     * @bodyParam title string required Titulo del articulo. Example: Que bonito esta
+     * @bodyParam content string required. Example: El contenido es lo que hay en el articulo
+     */
     public function index()
     {
         $articles = auth()->user()->articles()->with('category', 'collaborators')->get();
@@ -49,6 +63,9 @@ class ArticleApiController extends Controller
         return response()->json(['message' => 'post borrado']);
     }
 
+    /**
+     * @authenticated
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([

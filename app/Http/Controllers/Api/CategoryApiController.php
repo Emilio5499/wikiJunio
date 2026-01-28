@@ -9,6 +9,14 @@ use Illuminate\Http\Request;
 
 class CategoryApiController extends Controller
 {
+    /**
+     * Esta es la api para categorias
+     *
+     * Al contrario que la de articulos, esta no tiene contenido
+     * Solo tiene un "titulo" o nombre
+     *
+     * @bodyParam name string required Nombre de la categoria. Example: Coches
+     */
     public function index()
     {
         return Category::withCount('articles')->get();

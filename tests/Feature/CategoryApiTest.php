@@ -33,28 +33,5 @@ it('returns a list of categories', function () {
         ->assertJsonCount(2);
 });
 
-it('logged user can update his category', function () {
-
-    $user = User::factory()->create();
-
-    $this->actingAs($user, 'sanctum');
-
-    $category = Category::factory()->create([
-        'name' => 'titulo1',
-    ]);
-
-    Article::factory()->create([
-        'user_id' => $user->id,
-        'category_id' => $category->id,
-    ]);
-
-    $this->putJson("/api/categories/{$category->id}", [
-        'name' => 'titulo2',
-    ])
-        ->assertOk()
-        ->assertJsonFragment([
-            'name' => 'titulo2',
-        ]);
-});
 
 

@@ -17,9 +17,14 @@ Route::middleware('auth:sanctum')->prefix('articles')->group(function () {
 
     Route::get('/users', [UserApiController::class, 'index']);
 
-    Route::get('/categories', [CategoryApiController::class, 'index']);
+Route::middleware('auth:sanctum')->prefix('categories')->group(function () {
+
+    Route::get('/', [CategoryApiController::class, 'index']);
     Route::post('/', [CategoryApiController::class, 'store']);
-    Route::get('/categories/{id}', [CategoryApiController::class, 'show']);
+    Route::get('{id}', [CategoryApiController::class, 'show']);
     Route::put('{id}', [CategoryApiController::class, 'update']);
     Route::delete('{id}', [CategoryApiController::class, 'destroy']);
+
+});
+
 

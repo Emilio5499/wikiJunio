@@ -1,11 +1,8 @@
 <?php
 
-use App\Livewire\CategoryCrud;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\User;
-use Livewire\Livewire;
-use Tests\TestCase;
 
 test('example', function () {
     $response = $this->get('/');
@@ -33,7 +30,7 @@ it('returns a list of categories', function () {
         ->assertJsonCount(2);
 });
 
-it('returns category and articles for auth user', function () {
+it('return category + articles for auth user', function () {
     $user = User::factory()->create();
     $category = Category::factory()->create();
 
@@ -54,3 +51,26 @@ it('returns category and articles for auth user', function () {
         ]);
 });
 
+it('logged user can update a category that has his articles', function () {
+
+    $user = User::factory()->create();
+
+    $this->actingAs($user, 'sanctum');
+
+    $category = Category::factory()->create([
+        'name' => 'Nombre viejo',
+    ]);
+
+    Article::factory()->create([
+        'user_id' => $user->id,
+        'category_id' => $category->id,
+    ]);
+
+    $this->putJson("/api/categories/{$category->id}", [
+        'name' => 'Nombre nuevo',
+    ])
+        ->assertOk()
+        ->assertJsonFragment([
+            'name' => 'Nombre nuevo',
+        ]);
+});

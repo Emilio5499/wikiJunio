@@ -13,6 +13,4 @@ class UserApiController extends Controller
         return Category::withCount('user')->get();
     }
 
-
-
 }

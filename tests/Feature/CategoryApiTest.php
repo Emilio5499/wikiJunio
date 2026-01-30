@@ -11,6 +11,9 @@ test('example', function () {
 });
 
 it('lists categories with articles count', function () {
+    $user = \App\Models\User::factory()->create();
+    $this->actingAs($user, 'sanctum');
+
     Category::factory()
         ->has(Article::factory()->count(2))
         ->create();
@@ -23,6 +26,9 @@ it('lists categories with articles count', function () {
 });
 
 it('returns a list of categories', function () {
+    $user = \App\Models\User::factory()->create();
+    $this->actingAs($user, 'sanctum');
+
     Category::factory()->count(2)->create();
 
     $this->getJson('/api/categories')

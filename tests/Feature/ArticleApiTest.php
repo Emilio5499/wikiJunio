@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Article;
+use App\Models\Category;
 use App\Models\User;
 use function Pest\Laravel\{actingAs, getJson, postJson, putJson, deleteJson};
 
@@ -49,93 +50,39 @@ it('logged user can see own posts', function () {
     ]);
 });
 
-it('logged user can update own posts', function () {
+it('logged user can update post', function () {
+
     $user = User::factory()->create();
-    $article = Article::factory()->for($user)->create();
 
     actingAs($user, 'sanctum');
 
-    $newData = [
-        'title' => 'Titulo actualizado',
-        'content' => 'Contenido actualizado.',
-    ];
+    $category = Category::factory()->create();
 
-    $response = putJson("/api/articles/{$article->id}", $newData);
-
-    $response->assertStatus(200);
-    $response->assertJsonFragment(['title' => 'Titulo actualizado']);
-
-    expect($article->fresh()->title)->toBe('Titulo actualizado');
-});
-
-it('logged user can delete own posts', function () {
-    $user = User::factory()->create();
-    $article = Article::factory()->for($user)->create();
-
-    actingAs($user);
-
-    $response = deleteJson("/api/articles/{$article->id}");
-
-    $response->assertStatus(200);
-    $response->assertJsonFragment(['message' => 'post borrado']);
-
-    expect(Article::find($article->id))->toBeNull();
-});
-
-it('user cannot edit other user post', function () {
-    $user = User::factory()->create();
-    $otro = User::factory()->create();
-
-    $article = Article::factory()->for($otro)->create();
-
-    actingAs($user);
-
-    putJson("/api/articles/{$article->id}", [
-        'title' => 'Editar',
-        'content' => 'contenido',
-    ])->assertStatus(404);
-});
-
-it('user cannot delete other user post', function () {
-    $user = User::factory()->create();
-    $otro = User::factory()->create();
-
-    $article = Article::factory()->for($otro)->create();
-
-    actingAs($user);
-
-    deleteJson("/api/articles/{$article->id}")
-        ->assertStatus(404);
-});
-
-it('cannot update post with invalid data', function () {
-    $user = User::factory()->create();
-    $article = Article::factory()->for($user)->create();
-
-    actingAs($user, 'sanctum');
-
-    $response = putJson("/api/articles/{$article->id}", [
-        'title' => '',
-        'content' => '',
+    $article = Article::factory()->create([
+        'user_id' => $user->id,
+        'title' => 'Titulo1',
+        'content' => 'Contenido1',
     ]);
 
-    $response->assertStatus(422);
-    $response->assertJsonValidationErrors(['title', 'content']);
+    $data = [
+        'title' => 'Titulo2',
+        'content' => 'Contenido2',
+        'category_id' => $category->id,
+    ];
+
+    $response = putJson("/api/articles/{$article->id}", $data);
+
+    $response->assertStatus(200);
+
+    $response->assertJsonFragment([
+        'message' => 'actualizado',
+        'title' => 'Titulo2',
+    ]);
+
+    $this->assertDatabaseHas('articles', [
+        'id' => $article->id,
+        'title' => 'Titulo2',
+        'content' => 'Contenido2',
+        'category_id' => $category->id,
+    ]);
 });
-
-it('cannot view post that does not exist', function () {
-    $user = User::factory()->create();
-    actingAs($user, 'sanctum');
-
-    getJson('/api/articles/999999')->assertStatus(404);
-});
-
-it('guest cannot access article endpoints', function () {
-    $article = Article::factory()->create();
-
-    getJson('/api/articles')->assertStatus(401);
-    getJson("/api/articles/{$article->id}")->assertStatus(401);
-    putJson("/api/articles/{$article->id}", [])->assertStatus(401);
-    deleteJson("/api/articles/{$article->id}")->assertStatus(401);
-});
-

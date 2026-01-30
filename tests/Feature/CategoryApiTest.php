@@ -13,12 +13,6 @@ test('example', function () {
     $response->assertStatus(200);
 });
 
-uses(TestCase::class, Illuminate\Foundation\Testing\RefreshDatabase::class);
-
-beforeEach(function () {
-    $this->user = User::factory()->create();
-});
-
 it('lists categories with articles count', function () {
     Category::factory()
         ->has(Article::factory()->count(2))
@@ -30,5 +24,15 @@ it('lists categories with articles count', function () {
             '*' => ['id', 'name', 'articles_count']
         ]);
 });
+
+it('returns a list of categories', function () {
+    Category::factory()->count(2)->create();
+
+    $this->getJson('/api/categories')
+        ->assertOk()
+        ->assertJsonCount(2);
+});
+
+
 
 

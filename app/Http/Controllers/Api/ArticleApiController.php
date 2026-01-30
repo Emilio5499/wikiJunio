@@ -50,7 +50,7 @@ class ArticleApiController extends Controller
         $article->update($validated);
 
         return response()->json([
-            'message' => 'post actualizado',
+            'message' => 'actualizado',
             'article' => $article
         ]);
     }

@@ -33,5 +33,24 @@ it('returns a list of categories', function () {
         ->assertJsonCount(2);
 });
 
+it('returns category and articles for auth user', function () {
+    $user = User::factory()->create();
+    $category = Category::factory()->create();
 
+    Article::factory()->create([
+        'category_id' => $category->id,
+        'user_id' => $user->id,
+    ]);
+
+    $this->actingAs($user)
+        ->getJson("/api/categories/{$category->id}")
+        ->assertOk()
+        ->assertJson([
+            'id' => $category->id,
+        ])
+        ->assertJsonStructure([
+            'id',
+            'articles',
+        ]);
+});
 
